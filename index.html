@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F-RIDE SUPREME MASTER PLATFORM - أبو الفهد العدوان</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        :root {
+            --bg-deep: #030712;
+            --bg-card: #0b1329;
+            --border-sys: #1e293b;
+            --gold-prime: #f59e0b;
+            --gold-hover: #d97706;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-blue: #3b82f6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background-color: var(--bg-deep); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
+
+        /* بوابة تسجيل الدخول السيادية */
+        #loginGate {
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+            background: radial-gradient(circle at center, #0b1329 0%, #030712 100%);
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; transition: 0.5s ease-in-out;
+        }
+        .gate-box {
+            background: var(--bg-card); border: 1px solid var(--border-sys); border-radius: 20px;
+            padding: 40px; width: 100%; max-width: 420px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            text-align: center; backdrop-filter: blur(10px);
+        }
+        .gate-box img { width: 75px; height: 75px; border-radius: 50%; border: 2px solid var(--gold-prime); margin-bottom: 20px; object-fit: cover; box-shadow: 0 0 20px rgba(245,158,11,0.4); }
+        .gate-box h1 { font-size: 21px; color: var(--gold-prime); font-weight: 800; margin-bottom: 5px; }
+        .gate-box p { font-size: 12px; color: var(--text-muted); margin-bottom: 25px; }
+
+        #adminDashboard { display: none; }
+        .admin-wrapper { display: flex; min-height: 100vh; width: 100%; }
+
+        /* القائمة الجانبية الاحترافية */
+        .sidebar {
+            width: 290px; background: var(--bg-card); border-left: 1px solid var(--border-sys);
+            display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 1000; overflow-y: auto;
+        }
+        .sidebar-header {
+            padding: 22px 20px; background: #02040a; border-bottom: 1px solid var(--border-sys);
+            display: flex; align-items: center; gap: 14px;
+        }
+        .sidebar-header img { width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--gold-prime); object-fit: cover; box-shadow: 0 0 15px rgba(245,158,11,0.3); }
+        .sidebar-header .title div:first-child { font-size: 14px; font-weight: 800; color: var(--gold-prime); }
+        .sidebar-header .title div:last-child { font-size: 11px; color: var(--text-muted); }
+
+        .nav-section { padding: 18px 20px 6px; font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 1.5px; }
+        .nav-menu { list-style: none; }
+        .nav-link {
+            padding: 13px 20px; cursor: pointer; font-size: 13px; color: var(--text-muted);
+            display: flex; align-items: center; gap: 14px; transition: 0.25s; font-weight: 600;
+            border-bottom: 1px solid rgba(255,255,255,0.01);
+        }
+        .nav-link i { width: 20px; color: var(--text-muted); font-size: 14px; }
+        .nav-link:hover, .nav-link.active { background: rgba(245, 158, 11, 0.1); color: var(--gold-prime); border-right: 4px solid var(--gold-prime); }
+        .nav-link:hover i, .nav-link.active i { color: var(--gold-prime); }
+
+        .main-container { flex: 1; margin-right: 290px; padding: 30px; width: calc(100% - 290px); }
+        
+        .top-navbar {
+            background: var(--bg-card); border: 1px solid var(--border-sys); border-radius: 16px;
+            padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4); backdrop-filter: blur(10px);
+        }
+        .top-navbar h2 { font-size: 19px; color: #fff; font-weight: 800; }
+        .top-navbar p { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+        .master-tag { background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); color: var(--gold-prime); padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-bottom: 30px; }
+        .stat-card { background: var(--bg-card); border: 1px solid var(--border-sys); border-radius: 16px; padding: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s; }
+        .stat-card:hover { border-color: rgba(245,158,11,0.4); transform: translateY(-2px); }
+        .stat-card .label { font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 8px; text-transform: uppercase; }
+        .stat-card .value { font-size: 22px; font-weight: 800; color: #fff; }
+        .stat-card .value.gold { color: var(--gold-prime); }
+
+        .panel-box { background: var(--bg-card); border: 1px solid var(--border-sys); border-radius: 16px; padding: 25px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .panel-title { font-size: 16px; font-weight: 800; color: var(--gold-prime); display: flex; align-items: center; gap: 10px; }
+
+        .settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
+        .input-group label { display: block; font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 8px; }
+        .input-group input, .input-group select {
+            width: 100%; padding: 13px; background: #030712; border: 1px solid var(--border-sys);
+            border-radius: 10px; color: var(--gold-prime); font-size: 15px; font-weight: bold; outline: none;
+        }
+        
+        .btn-action-main {
+            padding: 12px 24px; background: var(--accent-green); color: #fff; border: none; border-radius: 10px;
+            font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 12px rgba(16,185,129,0.3);
+        }
+        .btn-action-main:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        .table-responsive { width: 100%; overflow-x: auto; }
+        .data-table { width: 100%; border-collapse: collapse; text-align: right; font-size: 13px; }
+        .data-table th, .data-table td { padding: 16px; border-bottom: 1px solid var(--border-sys); color: #cbd5e1; }
+        .data-table th { background: #030712; color: var(--gold-prime); font-size: 11px; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; }
+        .data-table tr:hover td { background: rgba(255,255,255,0.015); }
+
+        .badge { padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 800; }
+        .badge.active { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge.warning { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+        .btn-tbl { padding: 7px 14px; border-radius: 7px; font-size: 11px; font-weight: 800; cursor: pointer; border: none; transition: 0.2s; }
+        .btn-tbl.blue { background: var(--accent-blue); color: #fff; }
+        .btn-tbl.red { background: var(--accent-red); color: #fff; }
+        .btn-tbl:hover { opacity: 0.85; }
+
+        #map { width: 100%; height: 450px; border-radius: 12px; border: 1px solid var(--border-sys); z-index: 1; }
+
+        @media (max-width: 992px) {
+            .sidebar { width: 70px; }
+            .sidebar-header .title, .nav-section, .nav-link span { display: none; }
+            .main-container { margin-right: 70px; width: calc(100% - 70px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loginGate">
+        <div class="gate-box">
+            <img src="1000337548.jpg" onerror="this.src='https://via.placeholder.com/75?text=F'">
+            <h1>F-RIDE SUPREME GATE</h1>
+            <p>منطقة سيادية محصنة - مخصصة للمالك (أبو الفهد العدوان)</p>
+            
+            <div style="text-align: right; margin-bottom: 15px;" class="input-group">
+                <label>معرف المالك المطلق (Master ID)</label>
+                <input type="text" id="masterId" value="" placeholder="أدخل المعرف يدويًا..." autocomplete="off" autocapitalize="off" spellcheck="false" data-lpignore="true">
+            </div>
+            
+            <div style="text-align: right; margin-bottom: 25px;" class="input-group">
+                <label>مفتاح الحماية المشفر</label>
+                <input type="password" id="secretKey" value="" placeholder="أدخل كلمة السر يدويًا..." autocomplete="new-password" data-lpignore="true">
+            </div>
+            
+            <button class="btn-action-main" style="width: 100%; padding: 14px; background: var(--gold-prime); color: #030712;" onclick="verifyMaster()">فتح النظام الحصري</button>
+        </div>
+    </div>
+
+    <div id="adminDashboard">
+        <div class="admin-wrapper">
+            
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <img src="1000337548.jpg" onerror="this.src='https://via.placeholder.com/48?text=F'">
+                    <div class="title">
+                        <div>أبو الفهد العدوان</div>
+                        <div>المشرف العام (Master)</div>
+                    </div>
+                </div>
+
+                <div class="nav-section">إدارة التشغيل والأُسْطول</div>
+                <ul class="nav-menu">
+                    <li class="nav-link active" onclick="switchTab('dashboard', this)"><i class="fa-solid fa-chart-pie"></i> <span>الرئيسية والإحصائيات</span></li>
+                    <li class="nav-link" onclick="switchTab('drivers', this)"><i class="fa-solid fa-user-check"></i> <span>تفعيل وإدارة الكباتن</span></li>
+                    <li class="nav-link" onclick="switchTab('wallet', this)"><i class="fa-solid fa-wallet"></i> <span>شحن الرصيد والتحويل للمندوبين</span></li>
+                    <li class="nav-link" onclick="switchTab('gateway', this)"><i class="fa-solid fa-credit-card"></i> <span>بوابات الدفع (Visa / Apple Pay)</span></li>
+                    <li class="nav-link" onclick="switchTab('pricing', this)"><i class="fa-solid fa-sliders"></i> <span>محرك الأسعار والعمولات</span></li>
+                    <li class="nav-link" onclick="switchTab('rides', this); initMap();"><i class="fa-solid fa-map-location-dot"></i> <span>رادار الخرائط الحية</span></li>
+                </ul>
+
+                <div class="nav-section">الأمان والنظام</div>
+                <ul class="nav-menu">
+                    <li class="nav-link" onclick="switchTab('settings', this)"><i class="fa-solid fa-shield-halved"></i> <span>إعدادات النظام والحماية</span></li>
+                    <li class="nav-link" onclick="location.reload()" style="color: var(--accent-red); margin-top: 15px;"><i class="fa-solid fa-power-off"></i> <span>قفل البوابة السيادية</span></li>
+                </ul>
+            </div>
+
+            <div class="main-container">
+                
+                <div class="top-navbar">
+                    <div>
+                        <h2 id="pageTitle">لوحة التحكم الرئيسية والسيطرة الميدانية</h2>
+                        <p>مرحباً بك يا أبو الفهد، النظام العالمي يعمل بكامل طاقته ومميزاته.</p>
+                    </div>
+                    <div class="master-tag"><i class="fa-solid fa-crown"></i> المالك المطلق: Mohammad139</div>
+                </div>
+
+                <div id="tab-dashboard" class="tab-content active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="label">إجمالي الرحلات النشطة</div>
+                            <div class="value gold">18,420</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="label">إجمالي الكباتن المسجلين</div>
+                            <div class="value">1,450</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="label">أرصدة ومحافظ المندوبين</div>
+                            <div class="value" style="color: var(--accent-green);">48,250 JOD</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="label">إيرادات بوابات الدفع (فيزا)</div>
+                            <div class="value gold">142,800 JOD</div>
+                        </div>
+                    </div>
+
+                    <div class="panel-box">
+                        <div class="panel-header">
+                            <div class="panel-title"><i class="fa-solid fa-bolt"></i> نظرة عامة على أداء أسطول F-Ride وسير العمليات</div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                               <thead>
+                                    <tr>
+                                        <th>فئة الخدمة</th>
+                                        <th>عدد الرحلات الكلي</th>
+                                        <th>نسبة الاستحواذ</th>
+                                        <th>الإيرادات المحققة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>تكسي الأجرة المعتمد (TaxiF)</td>
+                                        <td>459 رحلة</td>
+                                        <td><span class="badge active">90.5%</span></td>
+                                        <td style="color: var(--gold-prime);">384,396 JOD</td>
+                                    </tr>
+                                    <tr>
+                                        <td>توصيل الطرود والطلبات (Parcel)</td>
+                                        <td>48 طلب</td>
+                                        <td><span class="badge warning">9.5%</span></td>
+                                        <td style="color: var(--gold-prime);">10,679 JOD</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-drivers" class="tab-content">
+                    <div class="panel-box">
+                        <div class="panel-header">
+                            <div class="panel-title"><i class="fa-solid fa-user-check"></i> إدارة وتفعيل حسابات الكباتن الجدد بالمنظومة</div>
+                            <button class="btn-action-main" onclick="alert('تم فتح نموذج إضافة كابتن جديد وتوثيق مستنداته.')"><i class="fa-solid fa-user-plus"></i> إضافة كابتن جديد</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>اسم الكابتن</th>
+                                        <th>الخدمة / المدينة</th>
+                                        <th>رقم اللوحة والتصريح</th>
+                                        <th>حالة الحساب</th>
+                                        <th>إجراءات التفعيل الفوري</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>أبو الفهد العدوان (المالك)</td>
+                                        <td>مدير النظام العام (عمان)</td>
+                                        <td>عمان - 1-1399</td>
+                                        <td><span class="badge active">نشط وآمن</span></td>
+                                        <td><button class="btn-tbl blue">صلاحيات كاملة</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>كابتن أحمد خالد</td>
+                                        <td>تكسي الأجرة (عمان)</td>
+                                        <td>عمان - 4-8821</td>
+                                        <td><span class="badge active">مفعل رسمياً</span></td>
+                                        <td>
+                                            <button class="btn-tbl blue">تعديل الملف</button>
+                                            <button class="btn-tbl red">إيقاف الحساب</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>كابتن رامي السعايدة</td>
+                                        <td>توصيل طرود (إربد)</td>
+                                        <td>إربد - 7-3312</td>
+                                        <td><span class="badge warning">بانتظار موافقة المالك</span></td>
+                                        <td><button class="btn-tbl blue" style="background:var(--accent-green);" onclick="alert('تم تفعيل الكابتن بنجاح وأصبح جاهزاً للعمل في المنصة!')">تفعيل الكابتن الآن</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-wallet" class="tab-content">
+                    <div class="panel-box">
+                        <div class="panel-header">
+                            <div class="panel-title"><i class="fa-solid fa-money-bill-transfer"></i> محفظة المندوبين وشحن الأرصدة والعمولات</div>
+                        </div>
+                        <div class="settings-grid" style="margin-bottom: 25px;">
+                            <div class="input-group">
+                                <label>اختر الكابتن أو المندوب المستهدف</label>
+                                <select id="targetAgent">
+                                    <option>كابتن أحمد خالد (رصيد حالي: 14.50 JOD)</option>
+                                    <option>كابتن رامي السعايدة (رصيد حالي: 5.00 JOD)</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>المبلغ المراد شحنه أو تحويله (JOD)</label>
+                                <input type="number" id="transferAmount" value="50" placeholder="أدخل القيمة">
+                            </div>
+                            <div class="input-group" style="display: flex; align-items: flex-end;">
+                                <button class="btn-action-main" style="width: 100%;" onclick="alert('تم تحويل وشحن الرصيد للمندوب بنجاح وتم خصم العمولة تلقائياً وتسجيل المعركة في السجل المالي!')"><i class="fa-solid fa-circle-check"></i> تنفيذ التحويل الفوري</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-gateway" class="tab-content">
+                    <div class="panel-box">
+                        <div class="panel-header">
+                            <div class="panel-title"><i class="fa-solid fa-credit-card"></i> إدارة بوابات الدفع الإلكتروني (Visa / Mastercard / Apple Pay)</div>
+                            <button class="btn-action-main" onclick="alert('تم مزامنة بوابات الدفع الآمنة بنجاح.')"><i class="fa-s
