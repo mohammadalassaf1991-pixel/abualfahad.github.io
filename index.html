@@ -3,327 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F-RIDE SUPREME MASTER CONTROL PANEL</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <title>F-RIDE SUPREME CONTROL</title>
     <style>
-        :root {
-            --bg-dark: #0a0c10;
-            --panel-bg: #12161f;
-            --card-bg: #1a202c;
-            --accent-gold: #ffab00;
-            --accent-blue: #3182ce;
-            --text-main: #edf2f7;
-            --text-muted: #a0aec0;
-            --border-color: #2d3748;
-            --danger-color: #e53e3e;
-            --success-color: #38a169;
-            --warning-color: #dd6b20;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-        body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
-
-        /* ==================== بوابة الدخول ==================== */
-        .login-wrapper { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .login-card { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 35px 25px; width: 100%; max-width: 420px; box-shadow: 0 15px 35px rgba(0,0,0,0.7); text-align: center; }
-        .brand-logo { width: 90px; height: 90px; margin: 0 auto 15px; border-radius: 50%; overflow: hidden; border: 3px solid var(--accent-gold); box-shadow: 0 0 20px rgba(255, 171, 0, 0.3); }
-        .brand-logo img, .nav-logo img { width: 100%; height: 100%; object-fit: cover; }
-        .title { color: var(--accent-gold); font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; }
-        .subtitle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 25px; }
-        .error-message { display: none; background-color: rgba(229, 62, 62, 0.15); color: var(--danger-color); border: 1px solid var(--danger-color); padding: 10px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 15px; }
-        .form-group { margin-bottom: 18px; text-align: right; }
-        .form-group label { display: block; font-size: 0.85rem; margin-bottom: 8px; color: var(--text-main); }
-        .form-control { width: 100%; padding: 12px 16px; background-color: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 8px; color: #fff; outline: none; }
-        .form-control:focus { border-color: var(--accent-gold); }
-        .btn-submit { width: 100%; padding: 13px; background-color: var(--accent-gold); color: #000; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn-submit:hover { background-color: #e69a00; }
-
-        /* ==================== لوحة التحكم الرئيسية ==================== */
-        .dashboard-container { display: none; min-height: 100vh; flex-direction: column; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background-color: #0d1117; color: #c9d1d9; min-height: 100vh; }
         
-        /* الشريط العلوي */
-        .navbar { background-color: var(--panel-bg); border-bottom: 1px solid var(--border-color); padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
-        .nav-brand { display: flex; align-items: center; gap: 15px; }
-        .nav-logo { width: 45px; height: 45px; border-radius: 50%; overflow: hidden; border: 2px solid var(--accent-gold); }
-        .system-status { display: flex; align-items: center; gap: 8px; background-color: rgba(56, 161, 105, 0.15); color: var(--success-color); border: 1px solid var(--success-color); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
-        .pulse-dot { width: 8px; height: 8px; background-color: var(--success-color); border-radius: 50%; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.3); } 100% { opacity: 1; transform: scale(1); } }
-        .btn-logout { background-color: transparent; border: 1px solid var(--danger-color); color: var(--danger-color); padding: 8px 18px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .btn-logout:hover { background-color: var(--danger-color); color: #fff; }
+        .login-wrapper { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .login-card { background-color: #161b22; border: 1px solid #30363d; border-radius: 16px; padding: 30px; width: 100%; max-width: 400px; text-align: center; }
+        .brand-logo { width: 80px; height: 80px; margin: 0 auto 15px; border-radius: 50%; overflow: hidden; border: 2px solid #ffab00; }
+        .brand-logo img { width: 100%; height: 100%; object-fit: cover; }
+        .title { color: #ffab00; font-size: 1.3rem; margin-bottom: 5px; }
+        .subtitle { font-size: 0.85rem; color: #8b949e; margin-bottom: 20px; }
+        
+        .form-group { margin-bottom: 15px; text-align: right; }
+        .form-group label { display: block; font-size: 0.85rem; margin-bottom: 5px; }
+        .form-control { width: 100%; padding: 12px; background-color: #0d1117; border: 1px solid #30363d; border-radius: 8px; color: #fff; font-size: 1rem; }
+        .btn-submit { width: 100%; padding: 12px; background-color: #ffab00; color: #000; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        
+        .error-msg { display: none; color: #f85149; margin-bottom: 15px; font-size: 0.85rem; }
 
-        /* المحتوى العام */
-        .dashboard-content { padding: 25px; max-width: 1600px; margin: 0 auto; width: 100%; }
-
-        /* كروت الإحصائيات */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; text-align: right; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-        .stat-card h3 { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px; }
-        .stat-card .value { font-size: 1.8rem; font-weight: 800; color: var(--accent-gold); }
-        .stat-card .sub-text { font-size: 0.75rem; color: var(--success-color); margin-top: 5px; }
-
-        /* تقسيم الشبكة الأساسية */
-        .main-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
-        @media (max-width: 1100px) { .main-grid { grid-template-columns: 1fr; } }
-
-        /* الأقسام والشاشات */
-        .panel-section { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-        .panel-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 15px; }
-        .panel-title { font-size: 1.1rem; color: #fff; font-weight: bold; display: flex; align-items: center; gap: 8px; }
-
-        /* الخريطة */
-        #map { height: 450px; width: 100%; border-radius: 10px; border: 1px solid var(--border-color); z-index: 1; }
-
-        /* الجداول */
-        .table-responsive { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; text-align: right; font-size: 0.88rem; }
-        th, td { padding: 12px 15px; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
-        th { color: var(--accent-gold); background-color: rgba(255,171,0,0.05); font-weight: bold; }
-        tbody tr:hover { background-color: rgba(255,255,255,0.02); }
-
-        /* شارات الحالة والأزرار */
-        .badge { padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; display: inline-block; }
-        .badge-success { background-color: rgba(56, 161, 105, 0.2); color: var(--success-color); border: 1px solid var(--success-color); }
-        .badge-busy { background-color: rgba(221, 107, 32, 0.2); color: var(--warning-color); border: 1px solid var(--warning-color); }
-        .badge-danger { background-color: rgba(229, 62, 62, 0.2); color: var(--danger-color); border: 1px solid var(--danger-color); }
-
-        .btn-action { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold; transition: 0.2s; }
-        .btn-danger { background-color: var(--danger-color); color: #fff; }
-        .btn-danger:hover { background-color: #c53030; }
-        .btn-primary { background-color: var(--accent-blue); color: #fff; }
-        .btn-primary:hover { background-color: #2b6cb0; }
-
-        /* نموذج الإعدادات والتعرفة */
-        .setting-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        /* لوحة التحكم */
+        .dashboard { display: none; padding: 20px; }
+        .dash-header { background-color: #161b22; padding: 15px; border-radius: 8px; border: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .stat-box { background-color: #161b22; border: 1px solid #30363d; padding: 20px; border-radius: 8px; text-align: right; }
+        .stat-box h3 { font-size: 0.85rem; color: #8b949e; margin-bottom: 10px; }
+        .stat-box .num { font-size: 1.8rem; color: #ffab00; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div id="loginView" class="login-wrapper">
+    <!-- صفحة الدخول -->
+    <div id="loginPage" class="login-wrapper">
         <div class="login-card">
-            <div class="brand-logo"><img src="1000337548.jpg" alt="F-RIDE Logo"></div>
+            <div class="brand-logo"><img src="1000337548.jpg" alt="Logo"></div>
             <h1 class="title">F-RIDE SUPREME GATE</h1>
-            <p class="subtitle">منطقة سيادية محصنة - إدارة أبو الفهد العدوان</p>
-            <div id="errorBox" class="error-message">بيانات الدخول غير صحيحة، يرجى إعادة المحاولة.</div>
-            <form onsubmit="handleLogin(event)">
+            <p class="subtitle">بوابة الإدارة العامة - أبو الفهد العدوان</p>
+            
+            <div id="errorBox" class="error-msg">البيانات غير صحيحة، تأكد من اسم المستخدم وكلمة السر!</div>
+
+            <form onsubmit="checkLogin(event)">
                 <div class="form-group">
-                    <label>معرف المالك المطلق (Master ID)</label>
-                    <input type="text" id="masterId" class="form-control" placeholder="أدخل اسم المستخدم..." required autocomplete="off">
+                    <label>اسم المستخدم</label>
+                    <input type="text" id="userInput" class="form-control" value="mohammad139" required>
                 </div>
                 <div class="form-group">
-                    <label>مفتاح الحماية المشفر</label>
-                    <input type="password" id="securityKey" class="form-control" placeholder="أدخل كلمة السر..." required autocomplete="off">
+                    <label>كلمة السر</label>
+
+                    <input type="text" id="passInput" class="form-control" value="0796129002***" required>
                 </div>
                 <button type="submit" class="btn-submit">فتح النظام الحصري</button>
             </form>
         </div>
     </div>
 
-    <div id="dashboardView" class="dashboard-container">
-        <nav class="navbar">
-            <div class="nav-brand">
-                <div class="nav-logo"><img src="1000337548.jpg" alt="F-RIDE"></div>
-                <div>
-                    <strong style="color: var(--accent-gold); font-size: 1.1rem;">F-RIDE MASTER PLATFORM</strong>
-                    <div style="font-size: 0.75rem; color: var(--text-muted);">اللوحة العليا الموحدة لإدارة التكسي والرحلات</div>
-                </div>
+    <!-- لوحة التحكم -->
+    <div id="dashPage" class="dashboard">
+        <div class="dash-header">
+            <h2 style="color: #ffab00;">لوحة التحكم العليا - F-RIDE MASTER</h2>
+            <button onclick="location.reload()" style="background: red; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">خروج</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <h3>الكباتن النشطين</h3>
+                <div class="num">35</div>
             </div>
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <div class="system-status">
-                    <div class="pulse-dot"></div>
-                    خادم النظام متصل ومحمي
-                </div>
-                <button onclick="handleLogout()" class="btn-logout">تسجيل الخروج</button>
+            <div class="stat-box">
+                <h3>الرحلات القائمة</h3>
+                <div class="num">14</div>
             </div>
-        </nav>
-
-        <main class="dashboard-content">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h3>الكباتن النشطون الآن</h3>
-                    <div class="value" id="activeDriversCount">64</div>
-                    <div class="sub-text">↑ 12 كابتن متصل حديثاً</div>
-                </div>
-                <div class="stat-card">
-                    <h3>الرحلات الجارية الآن</h3>
-                    <div class="value" id="activeRidesCount">28</div>
-                    <div class="sub-text">18 طلب في الانتظار</div>
-                </div>
-                <div class="stat-card">
-                    <h3>إجمالي أرباح اليوم</h3>
-                    <div class="value">940.50 JOD</div>
-                    <div class="sub-text">صافي العمليات المكتملة</div>
-                </div>
-                <div class="stat-card">
-                    <h3>عمولة المنصة صافي</h3>
-                    <div class="value">141.00 JOD</div>
-                    <div class="sub-text">نسبة اقتطاع 15%</div>
-                </div>
+            <div class="stat-box">
+                <h3>أرباح اليوم</h3>
+                <div class="num">420 JOD</div>
             </div>
-
-            <div class="main-grid">
-                
-                <div>
-                    <div class="panel-section">
-                        <div class="panel-header">
-                            <div class="panel-title">📍 خريطة تتبع الكباتن والطلبات الحية (عمان)</div>
-                            <span style="font-size: 0.8rem; color: var(--accent-gold);">تحديث تلقائي كل 3 ثواني</span>
-                        </div>
-                        <div id="map"></div>
-                    </div>
-
-                    <div class="panel-section">
-                        <div class="panel-header">
-                            <div class="panel-title">🚖 إدارة الطلبات والرحلات الجارية</div>
-                        </div>
-                        <div class="table-responsive">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>رقم الطلب</th>
-                                        <th>اسم الراكب</th>
-                                        <th>الكابتن المسؤول</th>
-                                        <th>مسار الرحلة</th>
-                                        <th>المبلغ المقدر</th>
-                                        <th>الحالة</th>
-                                        <th>إجراء عاجل</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>#FR-8801</td>
-                                        <td>أحمد العبداللات</td>
-                                        <td>محمود الزعبي (تويوتا)</td>
-                                        <td>العبدلي ➔ دابوق</td>
-                                        <td>4.50 JOD</td>
-                                        <td><span class="badge badge-success">في الطريق للوجهة</span></td>
-                                        <td><button class="btn-action btn-danger" onclick="cancelRide('#FR-8801')">إلغاء الطلب</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>#FR-8802</td>
-                                        <td>سارة العلي</td>
-                                        <td>خالد الشوابكة (هيونداي)</td>
-                                        <td>الشميساني ➔ المطار</td>
-                                        <td>16.00 JOD</td>
-                                        <td><span class="badge badge-busy">جاري استقبال الراكب</span></td>
-                                        <td><button class="btn-action btn-danger" onclick="cancelRide('#FR-8802')">إلغاء الطلب</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>#FR-8803</td>
-                                        <td>عمر المجالي</td>
-                                        <td>عبدالله العبادي (كيا)</td>
-                                        <td>شارع مكة ➔ السابع</td>
-                                        <td>2.80 JOD</td>
-                                        <td><span class="badge badge-success">جاري التحرك</span></td>
-                                        <td><button class="btn-action btn-danger" onclick="cancelRide('#FR-8803')">إلغاء الطلب</button></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <div class="panel-section">
-                        <div class="panel-header">
-                            <div class="panel-title">👨‍✈️ قائمة وإدارة الكباتن المعتمدين</div>
-                        </div>
-                        <div class="table-responsive">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>الكابتن</th>
-                                        <th>المركبة</th>
-                                        <th>الرصيد</th>
-                                        <th>الحالة</th>
-                                        <th>الإجراء</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>محمد الحنيطي</td>
-                                        <td>كامري - 12-44930</td>
-                                        <td>25.00 JOD</td>
-                                        <td><span class="badge badge-success">متصل</span></td>
-                                        <td><button class="btn-action btn-danger" onclick="toggleDriver('محمد الحنيطي', 'حظر')">حظر</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>عمر النسور</td>
-                                        <td>سوناتا - 10-88392</td>
-                                        <td>-4.50 JOD</td>
-                                        <td><span class="badge badge-busy">في رحلة</span></td>
-                                        <td><button class="btn-action btn-primary" onclick="rechargeDriver('عمر النسور')">شحن</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>طارق الخوالدة</td>
-                                        <td>أوبتيما - 15-99201</td>
-                                        <td>0.00 JOD</td>
-                                        <td><span class="badge badge-danger">مجمّد</span></td>
-                                        <td><button class="btn-action btn-primary" onclick="toggleDriver('طارق الخوالدة', 'تفعيل')">تفعيل</button></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="panel-section">
-                        <div class="panel-header">
-                            <div class="panel-title">⚙️ التحكم بالتعرفة والعمولة المباشرة</div>
-                        </div>
-                        <div class="setting-row">
-                            <div class="form-group">
-                                <label>فتح العرف (بداية العداد)</label>
-                                <input type="text" id="baseFare" class="form-control" value="0.35 JOD">
-                            </div>
-                            <div class="form-group">
-                                <label>سعر الكيلومتر الواحد</label>
-                                <input type="text" id="kmFare" class="form-control" value="0.25 JOD">
-                            </div>
-                        </div>
-                        <div class="setting-row">
-                            <div class="form-group">
-                                <label>سعر دقيقة الانتظار</label>
-                                <input type="text" id="waitFare" class="form-control" value="0.05 JOD">
-                            </div>
-                            <div class="form-group">
-                                <label>عمولة التطبيق (%)</label>
-                                <input type="text" id="appCommission" class="form-control" value="15%">
-                            </div>
-                        </div>
-                        <button class="btn-submit" onclick="saveSettings()">تحديث واعتماد التسعيرة الآن</button>
-                    </div>
-
-                    <div class="panel-section">
-                        <div class="panel-header">
-                            <div class="panel-title">🚨 تنبيهات وبلاغات النظام المباشرة</div>
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem;">
-                            <div style="background-color: rgba(229, 62, 62, 0.1); border-right: 4px solid var(--danger-color); padding: 10px; border-radius: 4px;">
-                                <strong>طلب طوارئ (SOS):</strong> الكابتن عمر النسور - شارع المدينة المنورة (تم إرسال موقع الكابتن).
-                            </div>
-                            <div style="background-color: rgba(221, 107, 32, 0.1); border-right: 4px solid var(--warning-color); padding: 10px; border-radius: 4px;">
-                                <strong>تنبيه رصيد:</strong> رصيد الكابتن طارق الخوالدة وصل لأقل من الحد الأدنى.
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-        </main>
+        </div>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        let map;
+        function checkLogin(e) {
+            e.preventDefault();
+            var u = document.getElementById('userInput').value.trim();
+            var p = document.getElementById('passInput').value.trim();
 
-        // التحقق من الدخول
-        function handleLogin(event) {
-            event.preventDefault();
-            const masterIdInput = document.getElementById('masterId').value.trim();
-            const securityKeyInput = document.getElementById('securityKey').value.trim();
-            const errorBox = document.getElementById('errorBox');
+            if (u === "mohammad139" && p === "0796129002***") {
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('dashPage').style.display = 'block';
+            } else {
+                document.getElementById('errorBox').style.display = 'block';
+            }
+        }
+    </script>
 
-            if (masterIdInput === "mohammad139" && securityKeyInput === "0796129002***") {
-                errorBox.style.display = "none";
-                document.getElementById('loginView').style.display = "none";
-                document.getElementById('dashboardView').style.display = 
+</body>
+</html>
