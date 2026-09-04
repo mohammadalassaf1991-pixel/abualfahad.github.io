@@ -3,334 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F-RIDE Supreme Master Control</title>
-    <!-- تضمين خريطة جوجل الرسمية الأصلية -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=&v=weekly" async defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --bg-deep: #07090e;
-            --panel-bg: #101622;
-            --card-bg: #182232;
-            --gold: #ffb703;
-            --blue: #3b82f6;
-            --border: #22304a;
-            --text-main: #f8fafc;
-            --text-sub: #94a3b8;
-            --green: #10b981;
-            --yellow: #f59e0b;
-            --red: #ef4444;
+    <title>F-RIDE | نظام الإدارة والتحكم الآمن</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                        }
+                    }
+                }
+            }
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: var(--bg-deep); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
-
-        /* شاشة الدخول السيادية */
-        #loginScreen { position: fixed; inset: 0; background: radial-gradient(circle at center, #1e293b 0%, #07090e 100%); z-index: 99999; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .login-box-main { background: var(--panel-bg); border: 1px solid var(--border); border-radius: 18px; padding: 40px 30px; width: 100%; max-width: 420px; box-shadow: 0 25px 50px rgba(0,0,0,0.9); text-align: center; }
-        .login-box-main h1 { color: var(--gold); font-size: 1.7rem; margin-bottom: 5px; font-weight: 800; }
-        .login-box-main p { color: var(--text-sub); font-size: 0.85rem; margin-bottom: 25px; }
-        .inp-group { margin-bottom: 18px; text-align: right; }
-        .inp-group label { display: block; font-size: 0.8rem; color: var(--text-sub); margin-bottom: 6px; }
-        .inp-field { width: 100%; padding: 13px; background: var(--bg-deep); border: 1px solid var(--border); border-radius: 10px; color: #fff; font-size: 0.95rem; outline: none; transition: 0.3s; }
-        .inp-field:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(255,183,3,0.25); }
-        .btn-enter { width: 100%; padding: 14px; background: var(--gold); color: #000; border: none; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-enter:hover { background: #e0a100; }
-
-        /* هيكل لوحة التحكم المتكاملة */
-        #mainDashboard { display: none; min-height: 100vh; flex-direction: row; }
-        
-        /* القائمة الجانبية المتقدمة */
-        .sidebar { width: 280px; background: var(--panel-bg); border-left: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
-        .brand-box { padding: 20px; border-bottom: 1px solid var(--border); text-align: center; }
-        .brand-box h2 { color: var(--gold); font-size: 1.3rem; font-weight: 900; }
-        .brand-box span { font-size: 0.7rem; color: var(--text-sub); }
-
-        .menu-list { list-style: none; padding: 15px 0; }
-        .menu-item { padding: 13px 20px; display: flex; align-items: center; gap: 12px; color: var(--text-sub); cursor: pointer; transition: 0.2s; font-size: 0.9rem; border-right: 4px solid transparent; }
-        .menu-item:hover, .menu-item.active { background: rgba(255,183,3,0.08); color: var(--gold); border-right-color: var(--gold); }
-
-        /* مساحة العرض الرئيسية */
-        .content-area { flex-grow: 1; display: flex; flex-direction: column; min-width: 0; }
-        .top-header { background: var(--panel-bg); border-bottom: 1px solid var(--border); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-        .header-title h3 { font-size: 1.1rem; color: #fff; }
-        .header-title span { font-size: 0.75rem; color: var(--green); }
-
-        .body-wrapper { padding: 20px; flex-grow: 1; overflow-y: auto; }
-        .section-pane { display: none; }
-        .section-pane.active-pane { display: block; }
-
-        /* البطاقات والإحصائيات */
-        .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .stat-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
-        .stat-box .st-title { font-size: 0.8rem; color: var(--text-sub); }
-        .stat-box .st-val { font-size: 1.8rem; font-weight: 800; color: #fff; margin-top: 8px; }
-
-        .grid-workspace { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 20px; }
-        @media(max-width: 1024px) { .grid-workspace { grid-template-columns: 1fr; } }
-
-        .card-container { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 20px; }
-        .card-heading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; font-weight: bold; font-size: 0.95rem; }
-
-        /* خريطة جوجل السيادية */
-        #googleMapContainer { width: 100%; height: 420px; border-radius: 10px; border: 1px solid var(--border); background: #111; }
-
-        /* الجداول الاحترافية */
-        .table-scroll { width: 100%; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; text-align: right; font-size: 0.85rem; }
-        th, td { padding: 12px 14px; border-bottom: 1px solid var(--border); white-space: nowrap; }
-        th { background: var(--panel-bg); color: var(--gold); font-weight: 700; }
-        
-        .badge { padding: 4px 8px; border-radius: 5px; font-size: 0.7rem; font-weight: bold; }
-        .b-green { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
-        .b-yellow { background: rgba(245,158,11,0.15); color: var(--yellow); border: 1px solid rgba(245,158,11,0.3); }
-
-        .btn-act { padding: 5px 12px; border: none; border-radius: 5px; font-weight: bold; font-size: 0.8rem; cursor: pointer; transition: 0.2s; }
-        .bg-g { background: var(--green); color: #000; }
-        .bg-r { background: var(--red); color: #fff; }
-
-        /* التوافق الكامل مع الموبايل */
-        @media(max-width: 768px) {
-            #mainDashboard { flex-direction: column; }
-            .sidebar { width: 100%; height: auto; position: relative; }
-            .menu-list { display: flex; overflow-x: auto; padding: 8px; gap: 4px; }
-            .menu-item { padding: 8px 12px; white-space: nowrap; border-right: none; border-bottom: 3px solid transparent; border-radius: 6px; }
-            .menu-item.active { border-bottom-color: var(--gold); background: rgba(255,183,3,0.1); }
-            .top-header { padding: 12px 15px; }
-            .body-wrapper { padding: 15px; }
-            #googleMapContainer { height: 280px; }
-        }
-    </style>
+    </script>
 </head>
-<body>
+<body class="bg-gray-900 text-gray-100 font-sans antialiased h-screen overflow-hidden">
 
-    <!-- شاشة الدخول للوحة التحكم -->
-    <div id="loginScreen">
-        <div class="login-box-main">
-            <h1>F-RIDE MASTER</h1>
-            <p>لوحة التحكم العالمية المتكاملة لإدارة الأسطول والرحلات</p>
-            <div class="inp-group">
-                <label>معرف المسؤول</label>
-                <input type="text" id="loginUser" class="inp-field" value="mohammad139">
+    <!-- 1. شاشة تسجيل الدخول (تظهر افتراضياً) -->
+    <div id="loginScreen" class="fixed inset-0 bg-gray-900 flex items-center justify-center z-50">
+        <div class="bg-gray-800 p-8 rounded-2xl border border-gray-700 shadow-2xl w-full max-w-md">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-black text-brand-500 tracking-wider">F-RIDE</h1>
+                <p class="text-sm text-gray-400 mt-2">لوحة التحكم الآمنة - دخول المشرف</p>
             </div>
-            <div class="inp-group">
-                <label>كلمة السر الخاصة</label>
-                <input type="password" id="loginPass" class="inp-field" value="0796129002">
-            </div>
-            <button class="btn-enter" onclick="openMasterDashboard()">دخول إلى النظام السيادي</button>
+
+            <form onsubmit="handleLogin(event)" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">اسم المستخدم</label>
+                    <input type="text" id="username" required 
+                        class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand-500 transition"
+                        placeholder="أدخل اسم المستخدم">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">الرقم السري</label>
+                    <input type="password" id="password" required 
+                        class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand-500 transition"
+                        placeholder="••••••••••••">
+                </div>
+
+                <div id="errorMessage" class="text-red-500 text-sm text-center hidden">
+                    اسم المستخدم أو الرقم السري غير صحيح!
+                </div>
+
+                <button type="submit" 
+                    class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 rounded-xl transition shadow-lg">
+                    تسجيل الدخول
+                </button>
+            </form>
         </div>
     </div>
 
-    <!-- لوحة التحكم السيادية الشاملة -->
-    <div id="mainDashboard">
+    <!-- 2. لوحة التحكم الرئيسية (تكون مخفية حتى يتم تسجيل الدخول بنجاح) -->
+    <div id="dashboardScreen" class="flex h-screen overflow-hidden hidden">
         
-        <!-- القائمة الجانبية الشاملة للخيارات -->
-        <aside class="sidebar">
-            <div class="brand-box">
-                <h2>F-RIDE SUPREME</h2>
-                <span>Global Command Center</span>
+        <!-- الشريط الجانبي (Sidebar) -->
+        <aside class="w-64 bg-gray-800 border-r border-gray-700 hidden md:flex flex-col justify-between">
+            <div>
+                <!-- شعار النظام -->
+                <div class="flex items-center justify-center h-16 border-b border-gray-700">
+                    <span class="text-2xl font-black tracking-wider text-brand-500">F-RIDE <span class="text-xs bg-brand-600 text-white px-2 py-0.5 rounded-full">Secure</span></span>
+                </div>
+                <!-- القوائم -->
+                <nav class="p-4 space-y-2">
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 text-white bg-brand-600 rounded-xl font-medium shadow-lg">
+                        📊 لوحة القيادة
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-gray-700 rounded-xl transition">
+                        🚗 إدارة الكباتن
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-gray-700 rounded-xl transition">
+                        👥 الركاب المسجلين
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-gray-700 rounded-xl transition">
+                        📍 الرحلات النشطة
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-gray-700 rounded-xl transition">
+                        ⚙️ إعدادات النظام والأمان
+                    </a>
+                </nav>
             </div>
-            <ul class="menu-list">
-                <li class="active" onclick="switchPane('overview', this)">📊 القيادة والخرائط الحية</li>
-                <li onclick="switchPane('drivers', this)">🚕 إدارة الأسطول والكباتن</li>
-                <li onclick="switchPane('passengers', this)">👤 قاعدة بيانات الركاب</li>
-                <li onclick="switchPane('trips', this)">🗺️ تتبع الطلبات والرحلات</li>
-                <li onclick="switchPane('documents', this)">📄 تراخيص ووثائق الكباتن</li>
-                <li onclick="switchPane('finance', this)">💳 المحافظ والشحن المالي</li>
-                <li onclick="switchPane('settings', this)">⚙️ إعدادات التسعيرة والعداد</li>
-            </ul>
+            <!-- معلومات المشرف -->
+            <div class="p-4 border-t border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-brand-500 flex items-center justify-center font-bold text-gray-900">ف</div>
+                        <div>
+                            <p class="text-sm font-semibold">أبو الفهد</p>
+                            <p class="text-xs text-gray-400">المدير العام</p>
+                        </div>
+                    </div>
+                    <button onclick="logout()" title="تسجيل الخروج" class="text-gray-400 hover:text-red-400 transition">
+                        ⎋
+                    </button>
+                </div>
+            </div>
         </aside>
 
-        <!-- مساحة العمل الرئيسية -->
-        <div class="content-area">
-            <header class="top-header">
-                <div class="header-title">
-                    <h3 id="paneTitle">القيادة والخرائط الحية</h3>
-                    <span>● متصل بالخوادم المركزية (Live System Online)</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <span style="font-size: 0.85rem; color: var(--text-sub);">المسؤول: <strong style="color: var(--gold);">محمد العدوان</strong></span>
-                    <button onclick="location.reload()" class="btn-act bg-r">خروج</button>
+        <!-- المحتوى الرئيسي -->
+        <main class="flex-1 flex flex-col overflow-y-auto">
+            <!-- شريط علوي -->
+            <header class="h-16 bg-gray-800 border-b border-gray-700 flex items-center justify-between px-6">
+                <h1 class="text-xl font-bold">لوحة تحكم F-RIDE الرئيسية</h1>
+                <div class="flex items-center gap-4">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-900 text-green-300">
+                        🟢 النظام محمي ومستقر
+                    </span>
                 </div>
             </header>
 
-            <div class="body-wrapper">
-
-                <!-- 1. الرئيسية والخرائط -->
-                <div id="pane-overview" class="section-pane active-pane">
-                    <div class="grid-stats">
-                        <div class="stat-box">
-                            <div class="st-title">إجمالي إيرادات اليوم</div>
-                            <div class="st-val" style="color: var(--gold);">1,630 JOD</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="st-title">الرحلات النشطة الآن</div>
-                            <div class="st-val">28 رحلة</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="st-title">الكباتن المتصلون</div>
-                            <div class="st-val" style="color: var(--green);">64 كابتن</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="st-title">طلبات التوثيق الجديدة</div>
-                            <div class="st-val" style="color: var(--yellow);">12 طلب</div>
-                        </div>
+            <!-- تفاصيل الإحصائيات (Widgets) -->
+            <div class="p-6 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="bg-gray-800 p-5 rounded-2xl border border-gray-700 shadow">
+                        <p class="text-sm text-gray-400">الرحلات اليومية</p>
+                        <h3 class="text-2xl font-bold mt-2 text-brand-500">142</h3>
                     </div>
-
-                    <div class="grid-workspace">
-                        <div class="card-container" style="margin-bottom:0;">
-                            <div class="card-heading">
-                                <span>📍 خريطة جوجل الأصلية - التتبع المباشر لحركة الأسطول</span>
-                                <span style="font-size:0.75rem; color:var(--green);">عمان، الأردن</span>
-                            </div>
-                            <div id="googleMapContainer"></div>
-                        </div>
-                        <div class="card-container" style="margin-bottom:0;">
-                            <div class="card-heading"><span>📈 تحليل تدفق الطلبات الأسبوعي</span></div>
-                            <canvas id="mainChart" height="250"></canvas>
-                        </div>
+                    <div class="bg-gray-800 p-5 rounded-2xl border border-gray-700 shadow">
+                        <p class="text-sm text-gray-400">الكباتن النشطون</p>
+                        <h3 class="text-2xl font-bold mt-2 text-blue-400">38</h3>
+                    </div>
+                    <div class="bg-gray-800 p-5 rounded-2xl border border-gray-700 shadow">
+                        <p class="text-sm text-gray-400">الركاب المسجلين</p>
+                        <h3 class="text-2xl font-bold mt-2 text-purple-400">1,250</h3>
+                    </div>
+                    <div class="bg-gray-800 p-5 rounded-2xl border border-gray-700 shadow">
+                        <p class="text-sm text-gray-400">الأرباح اليومية</p>
+                        <h3 class="text-2xl font-bold mt-2 text-yellow-400">480 JOD</h3>
                     </div>
                 </div>
 
-                <!-- 2. إدارة الكباتن -->
-                <div id="pane-drivers" class="section-pane">
-                    <div class="card-container">
-                        <div class="card-heading">
-                            <span>🚕 إدارة الكباتن والسيارات المعتمدة</span>
-                            <button class="btn-act bg-g" onclick="addNewDriverPrompt()">+ إضافة كابتن</button>
-                        </div>
-                        <div class="table-scroll">
-                            <table id="driversTable">
-                               <thead>
-                                   <tr>
-                                       <th>اسم الكابتن</th>
-                                       <th>الهاتف</th>
-                                       <th>نوع المركبة</th>
-                                       <th>رقم اللوحة</th>
-                                       <th>الرصيد</th>
-                                       <th>الحالة</th>
-                                       <th>إجراءات التحكم</th>
-                                   </tr>
-                               </thead>
-                               <tbody>
-                                   <tr>
-                                       <td>محمود الزعبي</td>
-                                       <td>0790000001</td>
-                                       <td>تويوتا كامري (2022)</td>
-                                       <td>12-44930</td>
-                                       <td>25.00 JOD</td>
-                                       <td><span class="badge b-green">متصل ومتاح</span></td>
-                                       <td><button class="btn-act bg-r" onclick="toggleStatus(this)">تجميد الحساب</button></td>
-                                   </tr>
-                                   <tr>
-                                       <td>خالد الشوابكة</td>
-                                       <td>0790000002</td>
-                                       <td>هيونداي سوناتا (2021)</td>
-                                       <td>10-88392</td>
-                                       <td>-4.50 JOD</td>
-                                       <td><span class="badge b-yellow">في رحلة</span></td>
-                                       <td><button class="btn-act bg-r" onclick="toggleStatus(this)">تجميد الحساب</button></td>
-                                   </tr>
-                               </tbody>
-                            </table>
-                        </div>
+                <!-- جدول العمليات الحية -->
+                <div class="bg-gray-800 rounded-2xl border border-gray-700 p-6 shadow">
+                    <h3 class="text-lg font-bold mb-4">الرحلات والطلبات الجارية حالياً</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse">
+                            <thead>
+                                <tr class="border-b border-gray-700 text-gray-400 text-sm">
+                                    <th class="py-3 px-4">رقم الرحلة</th>
+                                    <th class="py-3 px-4">اسم الراكب</th>
+                                    <th class="py-3 px-4">اسم الكابتن</th>
+                                    <th class="py-3 px-4">الوجهة</th>
+                                    <th class="py-3 px-4">الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-700 text-sm">
+                                <tr>
+                                    <td class="py-3 px-4 font-mono text-brand-500">#FR-901</td>
+                                    <td class="py-3 px-4">محمد أحمد</td>
+                                    <td class="py-3 px-4">أبو الفهد (العدوان)</td>
+                                    <td class="py-3 px-4">عمان - الجبيهة</td>
+                                    <td class="py-3 px-4"><span class="bg-blue-900 text-blue-300 px-2.5 py-1 rounded-full text-xs">جارية</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4 font-mono text-brand-500">#FR-902</td>
+                                    <td class="py-3 px-4">خالد العبادي</td>
+                                    <td class="py-3 px-4">سامر محمود</td>
+                                    <td class="py-3 px-4">عمان - الصويفية</td>
+                                    <td class="py-3 px-4"><span class="bg-green-900 text-green-300 px-2.5 py-1 rounded-full text-xs">مكتملة</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-
-                <!-- 3. الركاب -->
-                <div id="pane-passengers" class="section-pane">
-                    <div class="card-container">
-                        <div class="card-heading"><span>👤 قاعدة بيانات الركاب والمستخدمين المسجلين</span></div>
-                        <div class="table-scroll">
-                            <table>
-                                <thead><tr><th>اسم الراكب</th><th>رقم الهاتف</th><th>الرحلات المكتملة</th><th>تاريخ التسجيل</th><th>الحالة</th></tr></thead>
-                                <tbody>
-                                    <tr><td>مروان صالح</td><td>0781111111</td><td>14 رحلة</td><td>2026-01-15</td><td><span class="badge b-green">نشط</span></td></tr>
-                                    <tr><td>سارة العلي</td><td>0782222222</td><td>8 رحلات</td><td>2026-03-10</td><td><span class="badge b-green">نشط</span></td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 4. الرحلات الجارية -->
-                <div id="pane-trips" class="section-pane">
-                    <div class="card-container">
-                        <div class="card-heading"><span>🗺️ مراقبة الرحلات والطلبات الحية لحظياً</span></div>
-                        <div class="table-scroll">
-                            <table>
-                                <thead><tr><th>رقم الطلب</th><th>الراكب</th><th>الكابتن المسؤول</th><th>مسار السفر</th><th>القيمة</th><th>الحالة الحية</th></tr></thead>
-                                <tbody>
-                                    <tr><td>#FR-8801</td><td>أحمد العبداللات</td><td>محمود الزعبي</td><td>العبدلي ➔ دابوق</td><td>4.50 JOD</td><td><span class="badge b-yellow">جاري التنفيذ</span></td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 5. الوثائق والتراخيص -->
-                <div id="pane-documents" class="section-pane">
-                    <div class="card-container">
-                        <div class="card-heading"><span>📄 نظام مراجعة رخص القيادة ووثائق الكباتن المعلقة</span></div>
-                        <div class="table-scroll">
-                            <table>
-                                <thead><tr><th>الكابتن</th><th>رخصة القيادة</th><th>ترخيص المركبة</th><th>عدم محكومية</th><th>القرار الإداري</th></tr></thead>
-                                <tbody>
-                                    <tr>
-                                        <td>وسام عبد الكريم</td>
-                                        <td><a href="#" style="color:var(--gold);">معاينة مستند</a></td>
-                                        <td><a href="#" style="color:var(--gold);">معاينة مستند</a></td>
-                                        <td><a href="#" style="color:var(--gold);">معاينة مستند</a></td>
-                                        <td>
-                                            <button class="btn-act bg-g" onclick="alert('تم اعتماد الكابتن وتفعيل حسابه بنجاح')">موافقة</button>
-                                            <button class="btn-act bg-r" onclick="alert('تم رفض المستند وإرسال تنبيه')">رفض</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 6. الشحن والمالية -->
-                <div id="pane-finance" class="section-pane">
-                    <div class="card-container">
-                        <div class="card-heading"><span>💳 المحافظ الرقمية وإدارة شحن أرصدة الكباتن</span></div>
-                        <div class="table-scroll">
-                            <table>
-                                <thead><tr><th>الكابتن</th><th>الرصيد الحالي</th><th>قيمة الشحن</th><th>تنفيذ عملية الشحن</th></tr></thead>
-                                <tbody>
-                                    <tr>
-                                        <td>محمود الزعبي</td>
-                                        <td>25.00 JOD</td>
-                                        <td><input type="number" placeholder="المبلغ بالدينار" style="padding:7px; background:var(--bg-deep); border:1px solid var(--border); color:#fff; border-radius:6px; width:120px;"></td>
-                                        <td><button class="btn-act bg-g" onclick="alert('تم شحن رصيد المحفظة وتحديث النظام فورياً')">شحن المحفظة</button></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 7. الإعدادات والعداد -->
-                <div id="pane-settings" class="section-pane">
-                    <div class="card-container" style="max-width: 500px;">
-                        <div class="card-heading"><span>⚙️ إعدادات العداد والتعرفة والعمولات</span></div>
-                        <div class="inp-group">
-                            <label>فتح العداد الأساسي (JOD)</label>
-                            <input type="text" class="inp-field" value="0.35">
-                        </div>
-                        <div class="inp-group">
-                            <label>سعر كيلومتر المسافة (JOD)</label>
-                            <input type="text" class="inp-field" value="0.25">
-                        </div>
-                        <div class="inp-group">
-                            <label>نسبة عمولة المنصة (%)</label>
-                            <input type="text" class="inp-field" value="15">
-                        </div>
-                        <button class="btn-enter" onclick="alert('تم حفظ وتحديث التسعيرة في قاعدة البيانات وتطبيقات الكباتن والركاب فورياً!')">حفظ ونشر التحديثات</button>
-                    </div>
-                </div>
-
             </div>
- 
+        </main>
+    </div>
+
+    <!-- سكربت إدارة تسجيل الدخول والأمان -->
+    <script>
+        function handleLogin(event) {
+            event.preventDefault();
+            const userInput = document.getElementById('username').value;
+            const passInput = document.getElementById('password').value;
+            const errorDiv = document.getElementById('errorMessage');
+
+            // بيانات الاعتماد المعتمدة
+            const correctUser = "mohammad139";
+            const correctPass = "0796129002***";
+
+            if (userInput === correctUser && passInput === correctPass) {
+                // إخفاء شاشة تسجيل الدخول وإظهار لوحة التحكم
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('dashboardScreen').classList.remove('hidden');
+            } else {
+                errorDiv.classList.remove('hidden');
+            }
+        }
+
+        function logout() {
+            // العودة لشاشة تسجيل الدخول وتفريغ الحقول
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('errorMessage').classList.add('hidden');
+            document.getElementById('dashboardScreen').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+        }
+    </script>
+
+</body>
+    </html>
+                        
