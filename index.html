@@ -4,15 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>F-RIDE | لوحة الإدارة والتحكم الأمنة</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Leaflet CSS للخرائط الحية -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        darkBg: '#0b0f19',
-                        cardBg: '#111827',
+                        darkBg: '#05070c',
+                        cardBg: '#0f172a',
                         brandGreen: '#10b981'
                     }
                 }
@@ -25,12 +27,13 @@
 </head>
 <body class="bg-darkBg text-gray-100 font-sans antialiased">
 
+    <!-- شاشة تسجيل الدخول الأمنة -->
     <div id="loginScreen" class="fixed inset-0 bg-darkBg z-50 flex items-center justify-center p-4">
         <div class="bg-cardBg border border-gray-800 p-8 rounded-2xl w-full max-w-md shadow-2xl">
             <div class="text-center mb-6">
-                <img src="https://i.ibb.co/6y40k3w/logo.jpg" class="w-20 h-20 rounded-xl mx-auto mb-3 object-cover border-2 border-brandGreen shadow-lg">
-                <h1 class="text-2xl font-black text-brandGreen">F-RIDE</h1>
-                <p class="text-xs text-gray-400 mt-1">بوابة الإدارة المركزية - أبو الفهد العدوان</p>
+                <div class="bg-red-600 text-white text-xs font-bold py-1 px-3 rounded-full mb-3 inline-block animate-bounce">🔥 نسخة سطح المكتب الفخمة - أبو الفهد</div>
+                <h1 class="text-3xl font-black text-brandGreen">F-RIDE</h1>
+                <p class="text-xs text-gray-400 mt-1">بوابة الإدارة المركزية الحصرية</p>
             </div>
             <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
@@ -42,54 +45,77 @@
                     <input type="password" id="password" required class="w-full bg-gray-900 border border-gray-800 rounded-lg px-4 py-3 text-sm focus:border-brandGreen focus:outline-none" placeholder="••••••••••••">
                 </div>
                 <p id="errorMsg" class="text-red-500 text-xs text-center hidden">خطأ في بيانات الدخول، تأكد من بياناتك!</p>
-                <button type="submit" class="w-full bg-brandGreen hover:bg-emerald-600 font-bold py-3 rounded-lg text-sm transition shadow-lg text-gray-950">دخول لوحة التحكم</button>
+                <button type="submit" class="w-full bg-brandGreen hover:bg-emerald-600 font-bold py-3 rounded-lg text-sm transition shadow-lg text-gray-950">دخول لوحة التحكم الشاملة</button>
             </form>
         </div>
     </div>
 
+    <!-- لوحة التحكم الرئيسية (Desktop Layout) -->
     <div id="dashboardScreen" class="hidden flex h-screen overflow-hidden">
         
-        <aside class="w-64 bg-cardBg border-l border-gray-800 flex flex-col justify-between hidden md:flex">
+        <!-- القائمة الجانبية (Sidebar) -->
+        <aside class="w-72 bg-cardBg border-l border-gray-800 flex flex-col justify-between hidden md:flex">
             <div>
+                <!-- هيدر القائمة -->
                 <div class="p-6 border-b border-gray-800 flex items-center gap-3">
-                    <img src="https://i.ibb.co/6y40k3w/logo.jpg" class="w-10 h-10 rounded-lg object-cover border border-brandGreen">
+                    <div class="w-10 h-10 rounded-lg bg-emerald-950 border border-brandGreen flex items-center justify-center font-black text-brandGreen">FR</div>
                     <div>
-                        <h3 class="font-black text-brandGreen text-sm">F-RIDE</h3>
+                        <h3 class="font-black text-brandGreen text-sm">F-RIDE SYSTEM</h3>
                         <p class="text-[10px] text-gray-400">إدارة الأسطول الذكي</p>
                     </div>
                 </div>
-                <nav class="p-4 space-y-1">
+                <!-- روابط التنقل -->
+                <nav class="p-4 space-y-2">
                     <button onclick="switchTab('home')" id="nav-home" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold bg-gray-800 text-brandGreen transition">📊 لوحة القيادة والبيانات</button>
                     <button onclick="switchTab('captains')" id="nav-captains" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-gray-200 transition">🚗 إدارة الكباتن والسيارات</button>
                     <button onclick="switchTab('riders')" id="nav-riders" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-gray-200 transition">👥 إدارة العملاء والركاب</button>
                     <button onclick="switchTab('settings')" id="nav-settings" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-gray-200 transition">⚙️ إعدادات الحماية والأمان</button>
                 </nav>
             </div>
+            <!-- معلومات المدير في الأسفل -->
             <div class="p-4 border-t border-gray-800 bg-gray-900/50 flex items-center justify-between">
                 <div>
                     <h4 class="text-xs font-bold text-gray-200">أبو الفهد العدوان</h4>
-                    <p class="text-[10px] text-emerald-400">🟢 المدير العام</p>
+                    <p class="text-[10px] text-emerald-400">🟢 المدير العام (مسؤول النظام)</p>
                 </div>
                 <button onclick="logout()" title="خروج" class="text-red-400 hover:text-red-300 text-xs font-bold px-2.5 py-1.5 bg-red-950/50 rounded border border-red-900">⎋</button>
             </div>
         </aside>
 
-        <main class="flex-1 flex flex-col h-screen overflow-y-auto">
+        <!-- المحتوى الرئيسي -->
+        <main class="flex-1 flex flex-col h-screen overflow-y-auto bg-darkBg">
             
-            <header class="bg-cardBg border-b border-gray-800 px-8 py-4 flex justify-between items-center sticky top-0 z-20">
+            <!-- الشريط العلوي -->
+            <header class="bg-cardBg border-b border-gray-800 px-8 py-4 flex justify-between items-center sticky top-0 z-20 shadow-md">
                 <div class="flex items-center gap-4">
-                    <h2 id="pageTitle" class="font-black text-lg text-brandGreen">لوحة القيادة والبيانات</h2>
-                    <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] px-3 py-1 rounded-full font-semibold">قاعدة البيانات الحية متصلة 🔒</span>
+                    <h2 id="pageTitle" class="font-black text-base text-brandGreen">لوحة القيادة والبيانات</h2>
+                    <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] px-3 py-1 rounded-full font-semibold">🔒 نظام مؤمن ومحمي بالكامل</span>
                 </div>
                 <div class="flex items-center gap-4 text-xs">
-                    <span class="text-gray-400">التاريخ: <b class="text-gray-200">2026/09/05</b></span>
+                    <span class="text-gray-400">المشرف: <b class="text-emerald-400">أبو الفهد العدوان</b></span>
                     <button onclick="logout()" class="md:hidden bg-red-950 text-red-400 px-3 py-1.5 rounded-lg border border-red-900">خروج</button>
                 </div>
             </header>
 
+            <!-- محتوى الصفحات -->
             <div class="p-8 space-y-6">
                 
+                <!-- القسم 1: لوحة القيادة -->
                 <div id="tab-home" class="space-y-6 content-section">
+                    
+                    <!-- تنبيه إضافي يؤكد التحديث -->
+                    <div class="bg-emerald-950/40 border border-emerald-800/60 p-4 rounded-xl flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">🚀</span>
+                            <div>
+                                <h4 class="text-xs font-bold text-emerald-400">تم تفعيل وضع سطح المكتب (Desktop Dashboard) بنجاح</h4>
+                                <p class="text-[11px] text-gray-300">جميع الخرائط، الجداول، والإحصائيات تعمل بكفاءة تامة.</p>
+                            </div>
+                        </div>
+                        <span class="text-xs font-bold text-gray-400">تاريخ التحديث: 2026/09/05</span>
+                    </div>
+
+                    <!-- الإحصائيات الأربع -->
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div class="bg-cardBg border border-gray-800 p-5 rounded-xl shadow-md">
                             <span class="text-xs text-gray-400">إجمالي السيارات المسجلة</span>
@@ -113,6 +139,7 @@
                         </div>
                     </div>
 
+                    <!-- الخريطة -->
                     <div class="bg-cardBg border border-gray-800 p-6 rounded-xl shadow-md">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-sm font-bold text-gray-200">📍 خريطة تتبع السيارات (GPS حقيقي - عمان)</h3>
@@ -122,6 +149,7 @@
                     </div>
                 </div>
 
+                <!-- القسم 2: إدارة الكباتن -->
                 <div id="tab-captains" class="space-y-6 content-section hidden">
                     <div class="flex justify-between items-center bg-cardBg border border-gray-800 p-4 rounded-xl">
                         <h3 class="font-bold text-sm">قائمة الكباتن والسيارات المرتبطة</h3>
@@ -139,7 +167,7 @@
                             </thead>
                             <tbody class="divide-y divide-gray-800">
                                 <tr>
-                                    <td class="p-4 font-bold">أبو الفهد (العدوان)</td>
+                                    <td class="p-4 font-bold text-emerald-400">أبو الفهد (العدوان) - المدير العام</td>
                                     <td class="p-4 text-gray-400">هيونداي النترا (12-4452)</td>
                                     <td class="p-4"><span class="bg-emerald-950 text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-800 text-[10px]">نشط ومفعل</span></td>
                                     <td class="p-4 flex gap-2">
@@ -161,6 +189,7 @@
                     </div>
                 </div>
 
+                <!-- القسم 3: إدارة العملاء والركاب -->
                 <div id="tab-riders" class="space-y-6 content-section hidden">
                     <div class="bg-cardBg border border-gray-800 p-6 rounded-xl shadow-md space-y-4">
                         <h3 class="font-bold text-sm">سجل العملاء والركاب النشطين</h3>
@@ -174,6 +203,7 @@
                     </div>
                 </div>
 
+                <!-- القسم 4: الإعدادات والأمان -->
                 <div id="tab-settings" class="space-y-6 content-section hidden">
                     <div class="bg-cardBg border border-gray-800 p-6 rounded-xl shadow-md space-y-4 max-w-xl">
                         <h3 class="font-bold text-sm">إعدادات الأمان وجدار الحماية</h3>
@@ -186,6 +216,7 @@
         </main>
     </div>
 
+    <!-- Leaflet JS للخرائط -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         let map;
@@ -242,5 +273,4 @@
         }
     </script>
 </body>
-    </html>
-    
+</html>
