@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F-RIDE - نظام إدارة وتوصيل الركاب</title>
+    <title>F-RIDE SUPREME - غرفة العمليات والتحكم المركزي الشامل</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -21,107 +21,224 @@
 </head>
 <body class="bg-fDark text-gray-100 font-sans antialiased min-h-screen flex flex-col md:flex-row overflow-x-hidden">
 
+    <!-- شاشة تسجيل الدخول الآمن -->
     <div id="login-screen" class="fixed inset-0 bg-[#0b0f19] z-50 flex items-center justify-center p-4">
         <div class="bg-fCard border border-gray-800 p-6 sm:p-8 rounded-3xl max-w-sm w-full space-y-6 shadow-2xl text-center">
             <div class="space-y-2">
-                <h1 class="text-3xl font-black text-fOrange tracking-wider">F-RIDE</h1>
-                <p class="text-xs text-gray-400">بوابة الإدارة المركزية للأسطول</p>
+                <h1 class="text-3xl font-black text-fOrange tracking-wider">F-RIDE SUPREME</h1>
+                <p class="text-xs text-gray-400">النظام الأمني لغرفة العمليات المركزية</p>
             </div>
             
             <div class="space-y-4 text-right">
                 <div>
                     <label class="block text-xs font-bold text-gray-400 mb-1">اسم المستخدم</label>
-                    <input type="text" id="username" placeholder="mohammad139" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-fOrange">
+                    <input type="text" id="username" value="mohammad139" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-fOrange">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-400 mb-1">كلمة المرور</label>
-                    <input type="password" id="password" placeholder="••••••••" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-fOrange">
+                    <input type="password" id="password" value="0796129002*" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-fOrange">
                 </div>
             </div>
 
             <button onclick="handleLogin()" class="w-full bg-fOrange text-gray-950 font-extrabold py-3.5 rounded-xl text-xs hover:bg-amber-400 transition shadow-lg">
-                تسجيل الدخول للنظام
+                فتح غرفة العمليات
             </button>
-            <p id="error-msg" class="text-[11px] text-red-400 hidden font-bold">اسم المستخدم أو كلمة المرور غير صحيحة!</p>
-            <p class="text-[10px] text-gray-500">نظام آمن خاص بإدارة الكباتن والرحلات</p>
+            <p id="error-msg" class="text-[11px] text-red-400 hidden font-bold">خطأ في بيانات الدخول المركزية!</p>
         </div>
     </div>
 
+    <!-- القائمة الجانبية الموحدة -->
     <aside class="w-full md:w-64 bg-fCard border-b md:border-b-0 md:border-l border-gray-800 flex flex-col justify-between shrink-0">
         <div>
             <div class="p-5 border-b border-gray-800 flex items-center justify-between">
                 <span class="text-lg font-black text-fOrange tracking-wider">F-RIDE</span>
-                <button onclick="handleLogout()" class="text-gray-400 hover:text-red-400 text-xs bg-gray-900 px-3 py-1.5 rounded-lg border border-gray-800">خروج 🚪</button>
+                <button onclick="handleLogout()" class="text-gray-400 hover:text-red-400 text-xs bg-gray-900 px-3 py-1.5 rounded-lg border border-gray-800">قفل 🚪</button>
             </div>
             <nav class="p-3 space-y-1 flex md:flex-col overflow-x-auto md:overflow-visible">
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="flex-shrink-0 md:w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold bg-fOrange text-gray-950 transition text-right">📊 لوحة العمليات</button>
-                <button onclick="switchTab('new-ride')" id="nav-new-ride" class="flex-shrink-0 md:w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right">➕ طلب رحلة جديدة</button>
-                <button onclick="switchTab('drivers')" id="nav-drivers" class="flex-shrink-0 md:w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right">👨‍✈️ السائقين والـ OTP</button>
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="flex-shrink-0 md:w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold bg-fOrange text-gray-950 transition text-right">📊 لوحة العمليات والحالة</button>
+                <button onclick="switchTab('rides')" id="nav-rides" class="flex-shrink-0 md:w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right">🚗 الطلبات والـ OTP الفوري</button>
+                <button onclick="switchTab('drivers')" id="nav-drivers" class="flex-shrink-0 md:w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right">👨‍✈️ إدارة الكباتن والسيارات</button>
+                <button onclick="switchTab('finance')" id="nav-finance" class="flex-shrink-0 md:w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right">💰 الحسابات والمحافظ والعمولات</button>
+                <button onclick="switchTab('maintenance')" id="nav-maintenance" class="flex-shrink-0 md:w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right">🛠️ صيانة الأسطول والميكانيك</button>
+                <button onclick="switchTab('delegates')" id="nav-delegates" class="flex-shrink-0 md:w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right">📋 المندوبين والمشرفين</button>
             </nav>
         </div>
     </aside>
 
+    <!-- المحتوى والتحكم الرئيسي -->
     <main class="flex-1 flex flex-col h-screen overflow-y-auto bg-fDark">
         <header class="bg-fCard border-b border-gray-800 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
-            <h2 id="headerTitle" class="font-black text-sm text-white">لوحة العمليات والتحكم</h2>
-            <span class="bg-emerald-950/80 text-emerald-400 border border-emerald-800 px-3 py-1 rounded-full text-[10px]">● المدير: mohammad139</span>
+            <h2 id="headerTitle" class="font-black text-sm text-white">لوحة العمليات والتحكم المركزي</h2>
+            <span class="bg-emerald-950/80 text-emerald-400 border border-emerald-800 px-3 py-1 rounded-full text-[10px]">● المدير العام: أبو الفهد (mohammad139)</span>
         </header>
 
         <div class="p-4 sm:p-6 space-y-6">
             
+            <!-- 1. لوحة العمليات والحالة -->
             <div id="tab-dashboard" class="space-y-4 content-section">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                     <div class="bg-fCard border border-gray-800 p-4 rounded-2xl">
                         <span class="text-xs text-gray-400">الطلبات النشطة بالشارع</span>
                         <h3 id="stat-active" class="text-2xl font-black text-fOrange mt-1">0</h3>
                     </div>
                     <div class="bg-fCard border border-gray-800 p-4 rounded-2xl">
-                        <span class="text-xs text-gray-400">إجمالي الأرباح المسجلة</span>
+                        <span class="text-xs text-gray-400">الكباتن المتاحين الآن</span>
+                        <h3 class="text-2xl font-black text-blue-400 mt-1">16</h3>
+                    </div>
+                    <div class="bg-fCard border border-gray-800 p-4 rounded-2xl">
+                        <span class="text-xs text-gray-400">إجمالي الأرباح العامة</span>
                         <h3 id="stat-earnings" class="text-2xl font-black text-emerald-400 mt-1">$0.00</h3>
+                    </div>
+                    <div class="bg-fCard border border-gray-800 p-4 rounded-2xl">
+                        <span class="text-xs text-gray-400">الرحلات المكتملة</span>
+                        <h3 id="stat-completed" class="text-2xl font-black text-purple-400 mt-1">0</h3>
                     </div>
                 </div>
 
-                <div class="bg-fCard border border-gray-800 p-5 rounded-2xl space-y-3">
-                    <h3 class="font-bold text-xs text-fOrange">سجل الرحلات الميدانية الفورية</h3>
-                    <div id="live-rides-list" class="space-y-2">
-                        <p class="text-xs text-gray-500">لا توجد رحلات مسجلة حالياً. استخدم قسم "طلب رحلة جديدة" لإضافة رحلة.</p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div class="bg-fCard border border-gray-800 p-5 rounded-2xl space-y-3">
+                        <h3 class="font-bold text-xs text-fOrange">سجل حركة الرحلات الميدانية الفورية</h3>
+                        <div id="live-rides-list" class="space-y-2 max-h-64 overflow-y-auto">
+                            <p class="text-xs text-gray-500">لا توجد رحلات نشطة حالياً. توجه لقسم الطلبات لإضافة رحلة جديدة.</p>
+                        </div>
+                    </div>
+                    <div class="bg-fCard border border-gray-800 p-5 rounded-2xl space-y-3">
+                        <h3 class="font-bold text-xs text-fOrange">رصد حركة الكباتن والخرائط الحية</h3>
+                        <div class="space-y-2 text-xs">
+                            <div class="flex justify-between p-3 bg-gray-900 rounded-xl border border-gray-800">
+                                <span class="text-white">الكابتن زياد العساف (النترا 1600سي سي)</span>
+                                <span class="text-emerald-400 font-bold">عمان - شارع مكة (في رحلة)</span>
+                            </div>
+                            <div class="flex justify-between p-3 bg-gray-900 rounded-xl border border-gray-800">
+                                <span class="text-white">الكابتن رائد المناصير (بريوس)</span>
+                                <span class="text-blue-400 font-bold">عمان - الدوار السابع (بانتظار طلب)</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div id="tab-new-ride" class="space-y-4 content-section hidden">
-                <div class="bg-fCard border border-gray-800 p-5 rounded-2xl space-y-4 max-w-lg">
-                    <h3 class="font-bold text-xs text-fOrange">تحديد طلب توصيل جديد</h3>
+            <!-- 2. الطلبات والـ OTP الفوري -->
+            <div id="tab-rides" class="space-y-4 content-section hidden">
+                <div class="bg-fCard border border-gray-800 p-5 rounded-2xl space-y-4 max-w-xl">
+                    <h3 class="font-bold text-xs text-fOrange">إصدار طلب توصيل وتوليد رمز أمان OTP</h3>
                     <div class="space-y-3 text-xs">
-                        <div>
-                            <label class="block text-gray-400 mb-1">اسم العميل/الراكب:</label>
-                            <input type="text" id="passenger-name" placeholder="مثال: أحمد العدوان" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 text-white">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-gray-400 mb-1">اسم الراكب:</label>
+                                <input type="text" id="passenger-name" placeholder="مثال: أحمد العدوان" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 text-white">
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 mb-1">رقم هاتف الراكب:</label>
+                                <input type="text" id="passenger-phone" placeholder="079XXXXXXXX" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 text-white">
+                            </div>
                         </div>
                         <div>
                             <label class="block text-gray-400 mb-1">موقع الاستلام:</label>
-                            <input type="text" id="pickup-loc" placeholder="مثال: عمان - شارع مكة" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 text-white">
+                            <input type="text" id="pickup-loc" placeholder="مثال: عمان - طبربور" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 text-white">
                         </div>
                         <div>
                             <label class="block text-gray-400 mb-1">الوجهة:</label>
-                            <input type="text" id="drop-loc" placeholder="مثال: الصويفية" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 text-white">
+                            <input type="text" id="drop-loc" placeholder="مثال: العبدلي بوليفارد" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 text-white">
                         </div>
-                        <div>
-                            <label class="block text-gray-400 mb-1">الأجرة المقدرة ($):</label>
-                            <input type="number" id="ride-fare" placeholder="10" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 text-white">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-gray-400 mb-1">الأجرة المقدرة ($):</label>
+                                <input type="number" id="ride-fare" placeholder="15" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 text-white">
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 mb-1">رمز الـ OTP الأمني:</label>
+                                <input type="text" id="ride-otp" value="8821" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 text-emerald-400 font-bold">
+                            </div>
                         </div>
-                        <button onclick="createNewRide()" class="w-full bg-fOrange text-gray-950 font-bold py-3 rounded-xl mt-2 shadow-lg">نشر الطلب للكباتن 🚗</button>
+                        <button onclick="createNewRide()" class="w-full bg-fOrange text-gray-950 font-bold py-3 rounded-xl mt-2 shadow-lg">نشر الطلب للكباتن بشبكة البلد 🚗</button>
                     </div>
                 </div>
             </div>
 
+            <!-- 3. إدارة الكباتن والسيارات -->
             <div id="tab-drivers" class="space-y-4 content-section hidden">
-                <div class="bg-fCard border border-gray-800 p-5 rounded-2xl space-y-4 max-w-md">
-                    <h3 class="font-bold text-xs text-fOrange">رمز التحقق الأمني للرحلة (OTP)</h3>
-                    <p class="text-xs text-gray-400">أدخل رمز الـ OTP للتحقق من صعود الراكب وبدء العداد:</p>
-                    <div class="p-3 bg-gray-900 rounded-xl text-center text-2xl font-black tracking-widest text-emerald-400 border border-gray-800">
-                        7742
+                <div class="bg-fCard border border-gray-800 p-5 rounded-2xl space-y-4">
+                    <h3 class="font-bold text-xs text-fOrange">سجل الكباتن والسيارات المرتبطة بالأسطول</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right text-xs">
+                            <thead>
+                                <tr class="border-b border-gray-800 text-gray-400">
+                                    <th class="p-3">اسم الكابتن</th>
+                                    <th class="p-3">رقم الهاتف</th>
+                                    <th class="p-3">المركبة والموديل</th>
+                                    <th class="p-3">حجم المحرك</th>
+                                    <th class="p-3">الحالة الميدانية</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-800 text-white">
+                                <tr>
+                                    <td class="p-3 font-bold">زياد العساف</td>
+                                    <td class="p-3">0791234567</td>
+                                    <td class="p-3">هيوانداي النترا (أبيض)</td>
+                                    <td class="p-3 text-fOrange">1600 سي سي</td>
+                                    <td class="p-3"><span class="text-emerald-400">● في رحلة</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-bold">رائد المناصير</td>
+                                    <td class="p-3">0789876543</td>
+                                    <td class="p-3">تويوتا بريوس (سيلفر)</td>
+                                    <td class="p-3 text-fOrange">1800 سي سي</td>
+                                    <td class="p-3"><span class="text-blue-400">● متاح</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <button onclick="alert('تم تاكيد رمز الـ OTP وانطلاق الرحلة بنجاح!')" class="w-full bg-fOrange text-gray-950 font-bold py-2.5 rounded-xl text-xs">تأكيد الرمز وبدء الرحلة</button>
+                </div>
+            </div>
+
+            <!-- 4. الحسابات والمحافظ والعمولات -->
+            <div id="tab-finance" class="space-y-4 content-section hidden">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-fCard border border-gray-800 p-4 rounded-2xl">
+                        <span class="text-xs text-gray-400">إجمالي الإيرادات العامة</span>
+                        <h3 id="fin-total" class="text-2xl font-black text-emerald-400 mt-1">$0.00</h3>
+                    </div>
+                    <div class="bg-fCard border border-gray-800 p-4 rounded-2xl">
+                        <span class="text-xs text-gray-400">عمولات الشركة (15%)</span>
+                        <h3 id="fin-commission" class="text-2xl font-black text-fOrange mt-1">$0.00</h3>
+                    </div>
+                    <div class="bg-fCard border border-gray-800 p-4 rounded-2xl">
+                        <span class="text-xs text-gray-400">أرصدة ومحافظ الكباتن (85%)</span>
+                        <h3 id="fin-drivers" class="text-2xl font-black text-blue-400 mt-1">$0.00</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. صيانة الأسطول والميكانيك -->
+            <div id="tab-maintenance" class="space-y-4 content-section hidden">
+                <div class="bg-fCard border border-gray-800 p-5 rounded-2xl space-y-4 max-w-xl">
+                    <h3 class="font-bold text-xs text-fOrange">متابعة صيانة سيارات الأسطول (زيوت، بواجي، وفلاتر)</h3>
+                    <div class="space-y-2 text-xs">
+                        <div class="p-3 bg-gray-900 rounded-xl border border-gray-800 flex justify-between items-center">
+                            <div>
+                                <span class="text-white font-bold">هيونداي النترا 1600 سي سي (زياد)</span>
+                                <p class="text-gray-400 text-[10px]">آخر غيار زيت بدون فلتر: 31/3/2026</p>
+                            </div>
+                            <span class="text-amber-400 font-bold bg-amber-950/60 px-2.5 py-1 rounded-lg border border-amber-800">تحت المتابعة</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. المندوبين والمشرفين -->
+            <div id="tab-delegates" class="space-y-4 content-section hidden">
+                <div class="bg-fCard border border-gray-800 p-5 rounded-2xl space-y-4 max-w-lg">
+                    <h3 class="font-bold text-xs text-fOrange">إدارة فريق العمل والمندوبين الميدانيين</h3>
+                    <div class="space-y-3 text-xs">
+                        <div class="p-3 bg-gray-900 rounded-xl border border-gray-800 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-white">عبدالله (مشرف ومنسق العمليات)</h4>
+                                <p class="text-gray-400 text-[10px]">متابعة انضمام الكباتن الجدد بالبلد</p>
+                            </div>
+                            <span class="bg-emerald-950 text-emerald-400 px-2 py-1 rounded text-[10px]">نشط ميدانياً</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -131,6 +248,59 @@
     <script>
         let totalEarnings = 0;
         let activeRidesCount = 0;
+        let completedCount = 0;
+        let ridesListArray = [];
+
+        // تحميل البيانات المحفوظة مسبقاً تلقائياً عند فتح النظام
+        window.onload = function() {
+            const savedData = localStorage.getItem('fride_system_data');
+            if(savedData) {
+                const parsed = JSON.parse(savedData);
+                totalEarnings = parsed.totalEarnings || 0;
+                activeRidesCount = parsed.activeRidesCount || 0;
+                completedCount = parsed.completedCount || 0;
+                ridesListArray = parsed.ridesListArray || [];
+                updateUIState();
+            }
+        };
+
+        function saveSystemState() {
+            const dataToSave = {
+                totalEarnings,
+                activeRidesCount,
+                completedCount,
+                ridesListArray
+            };
+            localStorage.setItem('fride_system_data', JSON.stringify(dataToSave));
+        }
+
+        function updateUIState() {
+            document.getElementById('stat-active').innerText = activeRidesCount;
+            document.getElementById('stat-earnings').innerText = '$' + totalEarnings.toFixed(2);
+            document.getElementById('stat-completed').innerText = completedCount;
+            
+            document.getElementById('fin-total').innerText = '$' + totalEarnings.toFixed(2);
+            document.getElementById('fin-commission').innerText = '$' + (totalEarnings * 0.15).toFixed(2);
+            document.getElementById('fin-drivers').innerText = '$' + (totalEarnings * 0.85).toFixed(2);
+
+            const list = document.getElementById('live-rides-list');
+            if(ridesListArray.length === 0) {
+                list.innerHTML = '<p class="text-xs text-gray-500">لا توجد رحلات نشطة حالياً. توجه لقسم الطلبات لإضافة رحلة جديدة.</p>';
+            } else {
+                list.innerHTML = '';
+                ridesListArray.forEach(ride => {
+                    const rideCard = document.createElement('div');
+                    rideCard.className = "p-3 bg-gray-900 rounded-xl border border-gray-800 text-xs space-y-1";
+                    rideCard.innerHTML = `
+                        <div class="flex justify-between"><span class="text-gray-400">الراكب:</span><span class="font-bold text-white">${ride.name} (${ride.phone})</span></div>
+                        <div class="flex justify-between"><span class="text-gray-400">المسار:</span><span class="text-white">${ride.pickup} ➔ ${ride.drop}</span></div>
+                        <div class="flex justify-between"><span class="text-gray-400">الأجرة والـ OTP:</span><span class="font-bold text-emerald-400">$${ride.fare.toFixed(2)} | رمز: ${ride.otp}</span></div>
+                        <div class="flex justify-between"><span class="text-gray-400">الحالة:</span><span class="text-amber-400 font-bold">بانتظار قبول الكابتن</span></div>
+                    `;
+                    list.appendChild(rideCard);
+                });
+            }
+        }
 
         function handleLogin() {
             const user = document.getElementById('username').value;
@@ -138,72 +308,4 @@
             const errorMsg = document.getElementById('error-msg');
 
             if(user === 'mohammad139' && pass === '0796129002*') {
-                document.getElementById('login-screen').classList.add('hidden');
-                errorMsg.classList.add('hidden');
-            } else {
-                errorMsg.classList.remove('hidden');
-            }
-        }
-
-        function handleLogout() {
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-            document.getElementById('login-screen').classList.remove('hidden');
-        }
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.content-section').forEach(sec => sec.classList.add('hidden'));
-            document.querySelectorAll('aside nav button').forEach(btn => {
-                btn.className = "flex-shrink-0 md:w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right";
-            });
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
-            document.getElementById('nav-' + tabId).className = "flex-shrink-0 md:w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold bg-fOrange text-gray-950 transition text-right";
-            
-            const titles = {
-                'dashboard': 'لوحة العمليات والتحكم',
-                'new-ride': 'طلب رحلة توصيل جديدة',
-                'drivers': 'إدارة السائقين والـ OTP'
-            };
-            document.getElementById('headerTitle').innerText = titles[tabId];
-        }
-
-        function createNewRide() {
-            const name = document.getElementById('passenger-name').value;
-            const pickup = document.getElementById('pickup-loc').value;
-            const drop = document.getElementById('drop-loc').value;
-            const fare = parseFloat(document.getElementById('ride-fare').value) || 0;
-
-            if(!name || !pickup || !drop) {
-                alert('الرجاء إدخال بيانات الرحلة كاملة');
-                return;
-            }
-
-            activeRidesCount++;
-            totalEarnings += fare;
-
-            document.getElementById('stat-active').innerText = activeRidesCount;
-            document.getElementById('stat-earnings').innerText = '$' + totalEarnings.toFixed(2);
-
-            const list = document.getElementById('live-rides-list');
-            if(activeRidesCount === 1) list.innerHTML = '';
-
-            const rideCard = document.createElement('div');
-            rideCard.className = "p-3 bg-gray-900 rounded-xl border border-gray-800 text-xs space-y-1";
-            rideCard.innerHTML = `
-                <div class="flex justify-between"><span class="text-gray-400">الراكب:</span><span class="font-bold text-white">${name}</span></div>
-                <div class="flex justify-between"><span class="text-gray-400">المسار:</span><span class="text-white">${pickup} ➔ ${drop}</span></div>
-                <div class="flex justify-between"><span class="text-gray-400">الأجرة:</span><span class="font-bold text-emerald-400">$${fare.toFixed(2)}</span></div>
-                <div class="flex justify-between"><span class="text-gray-400">الحالة:</span><span class="text-amber-400 font-bold">بانتظار الكابتن (نشط)</span></div>
-            `;
-            list.prepend(rideCard);
-
-            alert('تم نشر طلب الرحلة بنجاح وجاهز للكباتن!');
-            document.getElementById('passenger-name').value = '';
-            document.getElementById('pickup-loc').value = '';
-            document.getElementById('drop-loc').value = '';
-            document.getElementById('ride-fare').value = '';
-            switchTab('dashboard');
-        }
-    </script>
-</body>
-</html>
+                document.getElementById('login-screen').classLi
