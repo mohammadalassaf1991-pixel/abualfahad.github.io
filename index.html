@@ -21,38 +21,12 @@
 </head>
 <body class="bg-fDark text-gray-100 font-sans antialiased min-h-screen flex flex-row overflow-x-hidden">
 
-    <!-- شاشة تسجيل الدخول الآمن -->
-    <div id="login-screen" class="fixed inset-0 bg-[#0b0f19] z-50 flex items-center justify-center p-4">
-        <div class="bg-fCard border border-gray-800 p-8 rounded-3xl max-w-sm w-full space-y-6 shadow-2xl text-center">
-            <div class="space-y-2">
-                <h1 class="text-3xl font-black text-fOrange tracking-wider">F-RIDE SUPREME</h1>
-                <p class="text-xs text-gray-400">النظام الأمني لغرفة العمليات المركزية</p>
-            </div>
-            
-            <div class="space-y-4 text-right">
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 mb-1">اسم المستخدم</label>
-                    <input type="text" id="username" value="mohammad139" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-fOrange">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 mb-1">كلمة المرور</label>
-                    <input type="password" id="password" value="0796129002*" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-fOrange">
-                </div>
-            </div>
-
-            <button onclick="handleLogin()" class="w-full bg-fOrange text-gray-950 font-extrabold py-3.5 rounded-xl text-xs hover:bg-amber-400 transition shadow-lg">
-                فتح غرفة العمليات
-            </button>
-            <p id="error-msg" class="text-[11px] text-red-400 hidden font-bold">خطأ في بيانات الدخول المركزية!</p>
-        </div>
-    </div>
-
-    <!-- القائمة الجانبية الثابتة للكمبيوتر -->
+    <!-- القائمة الجانبية الثابتة -->
     <aside class="w-72 bg-fCard border-l border-gray-800 flex flex-col justify-between shrink-0 h-screen sticky top-0">
         <div>
             <div class="p-5 border-b border-gray-800 flex items-center justify-between">
                 <span class="text-lg font-black text-fOrange tracking-wider">F-RIDE SUPREME</span>
-                <button onclick="handleLogout()" class="text-gray-400 hover:text-red-400 text-xs bg-gray-900 px-3 py-1.5 rounded-lg border border-gray-800">قفل 🚪</button>
+                <span class="text-xs text-emerald-400 font-bold">متصل</span>
             </div>
             <nav class="p-4 space-y-2">
                 <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold bg-fOrange text-gray-950 transition text-right shadow-md">📊 لوحة العمليات والحالة</button>
@@ -68,7 +42,7 @@
         </div>
     </aside>
 
-    <!-- المحتوى والتحكم الرئيسي العريض للكمبيوتر -->
+    <!-- المحتوى والتحكم الرئيسي -->
     <main class="flex-1 flex flex-col h-screen overflow-y-auto bg-fDark">
         <header class="bg-fCard border-b border-gray-800 px-8 py-5 flex justify-between items-center sticky top-0 z-10">
             <h2 id="headerTitle" class="font-black text-sm text-white">لوحة العمليات والحالة</h2>
@@ -299,7 +273,40 @@
             }
         }
 
-        function handleLogin() {
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
-            con
+        function switchTab(tabId) {
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.add('hidden'));
+            document.querySelectorAll('aside nav button').forEach(btn => {
+                btn.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right";
+            });
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            document.getElementById('nav-' + tabId).className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold bg-fOrange text-gray-950 transition text-right shadow-md";
+            
+            const titles = {
+                'dashboard': 'لوحة العمليات والحالة',
+                'rides': 'إدارة الطلبات والـ OTP الفوري',
+                'drivers': 'إدارة الكباتن والسيارات',
+                'finance': 'الحسابات والمحافظ والعمولات',
+                'maintenance': 'صيانة الأسطول والميكانيك',
+                'delegates': 'المندوبين والمشرفين الميدانيين'
+            };
+            document.getElementById('headerTitle').innerText = titles[tabId];
+        }
+
+        function createNewRide() {
+            const name = document.getElementById('passenger-name').value;
+            const phone = document.getElementById('passenger-phone').value;
+            const pickup = document.getElementById('pickup-loc').value;
+            const drop = document.getElementById('drop-loc').value;
+            const fare = parseFloat(document.getElementById('ride-fare').value) || 0;
+            const otp = document.getElementById('ride-otp').value;
+
+            if(!name || !pickup || !drop) {
+                alert('الرجاء إدخال تفاصيل العميل والمواقع بشكل كامل');
+                return;
+            }
+
+            activeRidesCount++;
+            totalEarnings += fare;
+            completedCount++;
+
+            const newRideObj = { name, phone, pic
