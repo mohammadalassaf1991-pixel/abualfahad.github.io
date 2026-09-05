@@ -3,156 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F-RIDE - نظام إدارة سيارات الأجرة</title>
+    <title>F-RIDE - نظام إدارة وتوصيل الركاب</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        fDark: '#0f1117',
-                        fCard: '#181b25',
-                        fOrange: '#d97706'
+                        fDark: '#0b0f19',
+                        fCard: '#131826',
+                        fOrange: '#f59e0b'
                     }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-fDark text-gray-100 font-sans antialiased h-screen flex overflow-hidden">
+<body class="bg-fDark text-gray-100 font-sans antialiased min-h-screen flex flex-col md:flex-row overflow-x-hidden">
 
-    <!-- شاشة تسجيل الدخول -->
-    <div id="login-screen" class="fixed inset-0 bg-fDark z-50 flex items-center justify-center p-4">
-        <div class="bg-fCard border border-gray-800 p-8 rounded-3xl max-w-md w-full space-y-6 shadow-2xl text-center">
+    <div id="login-screen" class="fixed inset-0 bg-[#0b0f19] z-50 flex items-center justify-center p-4">
+        <div class="bg-fCard border border-gray-800 p-6 sm:p-8 rounded-3xl max-w-sm w-full space-y-6 shadow-2xl text-center">
             <div class="space-y-2">
                 <h1 class="text-3xl font-black text-fOrange tracking-wider">F-RIDE</h1>
-                <p class="text-xs text-gray-400">تسجيل الدخول إلى لوحة إدارة أسطول F-RIDE</p>
+                <p class="text-xs text-gray-400">بوابة الإدارة المركزية للأسطول</p>
             </div>
             
             <div class="space-y-4 text-right">
                 <div>
                     <label class="block text-xs font-bold text-gray-400 mb-1">اسم المستخدم</label>
-                    <input type="text" id="username" placeholder="أدخل اسم المستخدم" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-fOrange">
+                    <input type="text" id="username" placeholder="mohammad139" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-fOrange">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-400 mb-1">كلمة المرور</label>
-                    <input type="password" id="password" placeholder="أدخل كلمة المرور" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-fOrange">
+                    <input type="password" id="password" placeholder="••••••••" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-fOrange">
                 </div>
             </div>
 
-            <button onclick="handleLogin()" class="w-full bg-fOrange text-gray-950 font-bold py-3.5 rounded-xl text-xs hover:bg-amber-600 transition shadow-lg">
-                تسجيل الدخول إلى لوحة القيادة
+            <button onclick="handleLogin()" class="w-full bg-fOrange text-gray-950 font-extrabold py-3.5 rounded-xl text-xs hover:bg-amber-400 transition shadow-lg">
+                تسجيل الدخول للنظام
             </button>
-            <p id="error-msg" class="text-[11px] text-red-400 hidden">خطأ في اسم المستخدم أو كلمة المرور!</p>
-            <p class="text-[10px] text-gray-500">منصة F-RIDE المتكاملة لإدارة النقل</p>
+            <p id="error-msg" class="text-[11px] text-red-400 hidden font-bold">اسم المستخدم أو كلمة المرور غير صحيحة!</p>
+            <p class="text-[10px] text-gray-500">نظام آمن خاص بإدارة الكباتن والرحلات</p>
         </div>
     </div>
 
-    <!-- القائمة الجانبية (Sidebar) -->
-    <aside class="w-64 bg-fCard border-l border-gray-800 flex flex-col justify-between hidden md:flex">
+    <aside class="w-full md:w-64 bg-fCard border-b md:border-b-0 md:border-l border-gray-800 flex flex-col justify-between shrink-0">
         <div>
-            <div class="p-6 border-b border-gray-800 flex items-center justify-between">
-                <span class="text-xl font-black text-fOrange tracking-wider">F-RIDE</span>
-                <span class="text-[10px] bg-amber-500/20 text-fOrange px-2 py-0.5 rounded">إصدار 2026</span>
+            <div class="p-5 border-b border-gray-800 flex items-center justify-between">
+                <span class="text-lg font-black text-fOrange tracking-wider">F-RIDE</span>
+                <button onclick="handleLogout()" class="text-gray-400 hover:text-red-400 text-xs bg-gray-900 px-3 py-1.5 rounded-lg border border-gray-800">خروج 🚪</button>
             </div>
-            <nav class="p-4 space-y-1">
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold bg-fOrange text-gray-950 transition text-right">📊 لوحة التحكم (Dashboard)</button>
-                <button onclick="switchTab('rides')" id="nav-rides" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right">🚗 الرحلات الجارية (Live Rides)</button>
-                <button onclick="switchTab('otp')" id="nav-otp" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right">🔑 التحقق ورمز OTP</button>
-                <button onclick="switchTab('drivers')" id="nav-drivers" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right">👨‍✈️ إدارة السائقين (Drivers)</button>
-                <button onclick="switchTab('earnings')" id="nav-earnings" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right">💳 الأرباح والتقارير</button>
+            <nav class="p-3 space-y-1 flex md:flex-col overflow-x-auto md:overflow-visible">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="flex-shrink-0 md:w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold bg-fOrange text-gray-950 transition text-right">📊 لوحة العمليات</button>
+                <button onclick="switchTab('new-ride')" id="nav-new-ride" class="flex-shrink-0 md:w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right">➕ طلب رحلة جديدة</button>
+                <button onclick="switchTab('drivers')" id="nav-drivers" class="flex-shrink-0 md:w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right">👨‍✈️ السائقين والـ OTP</button>
             </nav>
-        </div>
-        <div class="p-4 border-t border-gray-800 flex items-center justify-between bg-gray-900/40">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-full bg-fOrange text-gray-950 font-bold flex items-center justify-center text-xs">م</div>
-                <div>
-                    <h4 class="text-xs font-bold text-white">mohammad139</h4>
-                    <p class="text-[10px] text-fOrange">مدير النظام</p>
-                </div>
-            </div>
-            <button onclick="handleLogout()" class="text-gray-400 hover:text-red-400 text-xs" title="تسجيل خروج">🚪</button>
         </div>
     </aside>
 
-    <!-- المحتوى الرئيسي -->
-    <main class="flex-1 flex flex-col h-screen overflow-y-auto bg-[#0b0d13]">
-        <header class="bg-fCard border-b border-gray-800 px-8 py-4 flex justify-between items-center sticky top-0 z-10">
-            <h2 id="headerTitle" class="font-black text-sm text-white">لوحة التحكم (Dashboard)</h2>
-            <div class="flex items-center gap-3 text-xs">
-                <span class="bg-emerald-950/60 text-emerald-400 border border-emerald-800/50 px-3 py-1 rounded-full text-[10px]">● نظام F-RIDE نشط</span>
-            </div>
+    <main class="flex-1 flex flex-col h-screen overflow-y-auto bg-fDark">
+        <header class="bg-fCard border-b border-gray-800 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
+            <h2 id="headerTitle" class="font-black text-sm text-white">لوحة العمليات والتحكم</h2>
+            <span class="bg-emerald-950/80 text-emerald-400 border border-emerald-800 px-3 py-1 rounded-full text-[10px]">● المدير: mohammad139</span>
         </header>
 
-        <div class="p-8">
+        <div class="p-4 sm:p-6 space-y-6">
             
-            <!-- 1. لوحة التحكم -->
-            <div id="tab-dashboard" class="space-y-6 content-section">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div class="bg-fCard border border-gray-800 p-5 rounded-2xl">
-                        <span class="text-xs text-gray-400">إجمالي الحجوزات</span>
-                        <h3 class="text-3xl font-black text-white mt-2">1,248</h3>
-                        <p class="text-[11px] text-emerald-400 mt-1">حجوزات F-RIDE الفورية</p>
+            <div id="tab-dashboard" class="space-y-4 content-section">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-fCard border border-gray-800 p-4 rounded-2xl">
+                        <span class="text-xs text-gray-400">الطلبات النشطة بالشارع</span>
+                        <h3 id="stat-active" class="text-2xl font-black text-fOrange mt-1">0</h3>
                     </div>
-                    <div class="bg-fCard border border-gray-800 p-5 rounded-2xl">
-                        <span class="text-xs text-gray-400">أجرة الرحلة الحالية</span>
-                        <h3 class="text-3xl font-black text-fOrange mt-2">$15.00</h3>
-                        <p class="text-[11px] text-emerald-400 mt-1">حساب المسافة بدقة</p>
+                    <div class="bg-fCard border border-gray-800 p-4 rounded-2xl">
+                        <span class="text-xs text-gray-400">إجمالي الأرباح المسجلة</span>
+                        <h3 id="stat-earnings" class="text-2xl font-black text-emerald-400 mt-1">$0.00</h3>
                     </div>
-                    <div class="bg-fCard border border-gray-800 p-5 rounded-2xl">
-                        <span class="text-xs text-gray-400">الرحلات النشطة</span>
-                        <h3 class="text-3xl font-black text-blue-400 mt-2">320</h3>
-                        <p class="text-[11px] text-blue-300 mt-1">تتبع مباشر عبر الـ GPS</p>
-                    </div>
-                    <div class="bg-fCard border border-gray-800 p-5 rounded-2xl">
-                        <span class="text-xs text-gray-400">تقييم الكباتن</span>
-                        <h3 class="text-3xl font-black text-purple-400 mt-2">⭐ 5.0</h3>
-                        <p class="text-[11px] text-purple-300 mt-1">تقييمات ركاب F-RIDE</p>
+                </div>
+
+                <div class="bg-fCard border border-gray-800 p-5 rounded-2xl space-y-3">
+                    <h3 class="font-bold text-xs text-fOrange">سجل الرحلات الميدانية الفورية</h3>
+                    <div id="live-rides-list" class="space-y-2">
+                        <p class="text-xs text-gray-500">لا توجد رحلات مسجلة حالياً. استخدم قسم "طلب رحلة جديدة" لإضافة رحلة.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. الرحلات الجارية -->
-            <div id="tab-rides" class="space-y-6 content-section hidden">
-                <div class="bg-fCard border border-gray-800 p-6 rounded-2xl space-y-4">
-                    <h3 class="font-bold text-sm text-fOrange">تفاصيل الرحلة المباشرة</h3>
-                    <div class="p-4 bg-gray-900 rounded-xl border border-gray-800 space-y-2">
-                        <div class="flex justify-between"><span class="text-xs text-gray-400">رقم الحجز:</span><span class="text-xs font-bold text-white">#9821</span></div>
-                        <div class="flex justify-between"><span class="text-xs text-gray-400">موقع الاستلام:</span><span class="text-xs font-bold text-white">شارع الملك حسين، عمان</span></div>
-                        <div class="flex justify-between"><span class="text-xs text-gray-400">الوجهة:</span><span class="text-xs font-bold text-white">مطار الملكة علياء</span></div>
-                        <div class="flex justify-between"><span class="text-xs text-gray-400">الحالة:</span><span class="text-xs font-bold text-amber-400">الكابتن وصل نقطة الاستلام</span></div>
+            <div id="tab-new-ride" class="space-y-4 content-section hidden">
+                <div class="bg-fCard border border-gray-800 p-5 rounded-2xl space-y-4 max-w-lg">
+                    <h3 class="font-bold text-xs text-fOrange">تحديد طلب توصيل جديد</h3>
+                    <div class="space-y-3 text-xs">
+                        <div>
+                            <label class="block text-gray-400 mb-1">اسم العميل/الراكب:</label>
+                            <input type="text" id="passenger-name" placeholder="مثال: أحمد العدوان" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 mb-1">موقع الاستلام:</label>
+                            <input type="text" id="pickup-loc" placeholder="مثال: عمان - شارع مكة" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 mb-1">الوجهة:</label>
+                            <input type="text" id="drop-loc" placeholder="مثال: الصويفية" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 mb-1">الأجرة المقدرة ($):</label>
+                            <input type="number" id="ride-fare" placeholder="10" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 text-white">
+                        </div>
+                        <button onclick="createNewRide()" class="w-full bg-fOrange text-gray-950 font-bold py-3 rounded-xl mt-2 shadow-lg">نشر الطلب للكباتن 🚗</button>
                     </div>
                 </div>
             </div>
 
-            <!-- 3. رمز OTP -->
-            <div id="tab-otp" class="space-y-6 content-section hidden">
-                <div class="bg-fCard border border-gray-800 p-6 rounded-2xl space-y-4 max-w-md">
-                    <h3 class="font-bold text-sm text-fOrange">نظام التحقق بررمز الـ OTP</h3>
-                    <p class="text-xs text-gray-400">إدخال رمز التحقق لبدء الرحلة:</p>
-                    <div class="p-3 bg-gray-900 rounded-xl text-center text-xl font-black tracking-widest text-emerald-400 border border-gray-800">
-                        9187
+            <div id="tab-drivers" class="space-y-4 content-section hidden">
+                <div class="bg-fCard border border-gray-800 p-5 rounded-2xl space-y-4 max-w-md">
+                    <h3 class="font-bold text-xs text-fOrange">رمز التحقق الأمني للرحلة (OTP)</h3>
+                    <p class="text-xs text-gray-400">أدخل رمز الـ OTP للتحقق من صعود الراكب وبدء العداد:</p>
+                    <div class="p-3 bg-gray-900 rounded-xl text-center text-2xl font-black tracking-widest text-emerald-400 border border-gray-800">
+                        7742
                     </div>
-                    <button onclick="alert('تم إدخال الرمز بنجاح وبدأت الرحلة!')" class="w-full bg-fOrange text-gray-950 font-bold py-2.5 rounded-xl text-xs">تأكيد رمز OTP وبدء الرحلة</button>
-                </div>
-            </div>
-
-            <!-- 4. إدارة السائقين -->
-            <div id="tab-drivers" class="space-y-6 content-section hidden">
-                <div class="bg-fCard border border-gray-800 p-6 rounded-2xl space-y-4">
-                    <h3 class="font-bold text-sm text-fOrange">قائمة السائقين المتاحين</h3>
-                    <div class="p-4 bg-gray-900 rounded-xl border border-gray-800 flex justify-between items-center">
-                        <div><h4 class="text-xs font-bold text-white">كابتن أسطول F-RIDE</h4><p class="text-[10px] text-emerald-400">الحالة: متصل وجاهز للطلبات</p></div>
-                        <span class="text-xs font-bold text-fOrange">⭐ 5.0</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 5. الأرباح -->
-            <div id="tab-earnings" class="space-y-6 content-section hidden">
-                <div class="bg-fCard border border-gray-800 p-6 rounded-2xl space-y-4">
-                    <h3 class="font-bold text-sm text-fOrange">سجل تحصيل الأجور</h3>
-                    <div class="text-2xl font-black text-emerald-400">$480.00 <span class="text-xs text-gray-400 font-normal">(إجمالي مقبوضات اليوم)</span></div>
+                    <button onclick="alert('تم تاكيد رمز الـ OTP وانطلاق الرحلة بنجاح!')" class="w-full bg-fOrange text-gray-950 font-bold py-2.5 rounded-xl text-xs">تأكيد الرمز وبدء الرحلة</button>
                 </div>
             </div>
 
@@ -160,6 +129,9 @@
     </main>
 
     <script>
+        let totalEarnings = 0;
+        let activeRidesCount = 0;
+
         function handleLogin() {
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
@@ -182,19 +154,55 @@
         function switchTab(tabId) {
             document.querySelectorAll('.content-section').forEach(sec => sec.classList.add('hidden'));
             document.querySelectorAll('aside nav button').forEach(btn => {
-                btn.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right";
+                btn.className = "flex-shrink-0 md:w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right";
             });
             document.getElementById('tab-' + tabId).classList.remove('hidden');
-            document.getElementById('nav-' + tabId).className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold bg-fOrange text-gray-950 transition text-right";
+            document.getElementById('nav-' + tabId).className = "flex-shrink-0 md:w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold bg-fOrange text-gray-950 transition text-right";
             
             const titles = {
-                'dashboard': 'لوحة التحكم (Dashboard)',
-                'rides': 'الرحلات الجارية (Live Rides)',
-                'otp': 'التحقق ورمز OTP',
-                'drivers': 'إدارة السائقين (Drivers)',
-                'earnings': 'الأرباح والتقارير'
+                'dashboard': 'لوحة العمليات والتحكم',
+                'new-ride': 'طلب رحلة توصيل جديدة',
+                'drivers': 'إدارة السائقين والـ OTP'
             };
             document.getElementById('headerTitle').innerText = titles[tabId];
+        }
+
+        function createNewRide() {
+            const name = document.getElementById('passenger-name').value;
+            const pickup = document.getElementById('pickup-loc').value;
+            const drop = document.getElementById('drop-loc').value;
+            const fare = parseFloat(document.getElementById('ride-fare').value) || 0;
+
+            if(!name || !pickup || !drop) {
+                alert('الرجاء إدخال بيانات الرحلة كاملة');
+                return;
+            }
+
+            activeRidesCount++;
+            totalEarnings += fare;
+
+            document.getElementById('stat-active').innerText = activeRidesCount;
+            document.getElementById('stat-earnings').innerText = '$' + totalEarnings.toFixed(2);
+
+            const list = document.getElementById('live-rides-list');
+            if(activeRidesCount === 1) list.innerHTML = '';
+
+            const rideCard = document.createElement('div');
+            rideCard.className = "p-3 bg-gray-900 rounded-xl border border-gray-800 text-xs space-y-1";
+            rideCard.innerHTML = `
+                <div class="flex justify-between"><span class="text-gray-400">الراكب:</span><span class="font-bold text-white">${name}</span></div>
+                <div class="flex justify-between"><span class="text-gray-400">المسار:</span><span class="text-white">${pickup} ➔ ${drop}</span></div>
+                <div class="flex justify-between"><span class="text-gray-400">الأجرة:</span><span class="font-bold text-emerald-400">$${fare.toFixed(2)}</span></div>
+                <div class="flex justify-between"><span class="text-gray-400">الحالة:</span><span class="text-amber-400 font-bold">بانتظار الكابتن (نشط)</span></div>
+            `;
+            list.prepend(rideCard);
+
+            alert('تم نشر طلب الرحلة بنجاح وجاهز للكباتن!');
+            document.getElementById('passenger-name').value = '';
+            document.getElementById('pickup-loc').value = '';
+            document.getElementById('drop-loc').value = '';
+            document.getElementById('ride-fare').value = '';
+            switchTab('dashboard');
         }
     </script>
 </body>
