@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zoyride - لوحة التحكم وإدارة أسطول السيارات</title>
+    <title>Zoyride - نظام إدارة سيارات الأجرة</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -21,112 +21,130 @@
 </head>
 <body class="bg-zoyDark text-gray-100 font-sans antialiased h-screen flex overflow-hidden">
 
-    <!-- القائمة الجانبية الفعالة -->
+    <div id="login-screen" class="fixed inset-0 bg-zoyDark z-50 flex items-center justify-center p-4">
+        <div class="bg-zoyCard border border-gray-800 p-8 rounded-3xl max-w-md w-full space-y-6 shadow-2xl text-center">
+            <div class="space-y-2">
+                <span class="text-3xl font-black text-zoyOrange tracking-wider">ZOYRIDE</span>
+                <p class="text-xs text-gray-400">تسجيل الدخول إلى لوحة إدارة أسطول سيارات الأجرة</p>
+            </div>
+            
+            <div class="space-y-4 text-right">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-1">اسم المستخدم</label>
+                    <input type="text" id="username" placeholder="أدخل اسم المستخدم" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-zoyOrange">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-1">كلمة المرور</label>
+                    <input type="password" id="password" placeholder="أدخل كلمة المرور" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-zoyOrange">
+                </div>
+            </div>
+
+            <button onclick="handleLogin()" class="w-full bg-zoyOrange text-gray-950 font-bold py-3.5 rounded-xl text-xs hover:bg-amber-400 transition shadow-lg">
+                تسجيل الدخول إلى لوحة القيادة
+            </button>
+            <p id="error-msg" class="text-[11px] text-red-400 hidden">خطأ في اسم المستخدم أو كلمة المرور!</p>
+            <p class="text-[10px] text-gray-500">نظام حجز وإرسال سيارات الأجرة المتكامل</p>
+        </div>
+    </div>
+
     <aside class="w-64 bg-zoyCard border-l border-gray-800 flex flex-col justify-between hidden md:flex">
         <div>
             <div class="p-6 border-b border-gray-800 flex items-center justify-between">
                 <span class="text-xl font-black text-zoyOrange tracking-wider">ZOYRIDE</span>
-                <span class="text-[10px] bg-orange-500/20 text-zoyOrange px-2 py-0.5 rounded">نسخة المدير</span>
+                <span class="text-[10px] bg-amber-500/20 text-zoyOrange px-2 py-0.5 rounded">إصدار 2026</span>
             </div>
             <nav class="p-4 space-y-1">
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold bg-zoyOrange text-gray-950 transition text-right">📊 لوحة القيادة (Dashboard)</button>
-                <button onclick="switchTab('bookings')" id="nav-bookings" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right">📅 الحجوزات (Bookings)</button>
-                <button onclick="switchTab('dispatch')" id="nav-dispatch" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right">🚀 نظام الإرسال (Dispatch)</button>
-                <button onclick="switchTab('fleet')" id="nav-fleet" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right">🚗 الأسطول والمركبات (Fleet)</button>
-                <button onclick="switchTab('payments')" id="nav-payments" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right">💳 المدفوعات والأرباح (Payments)</button>
-                <button onclick="switchTab('settings')" id="nav-settings" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right">⚙️ إعدادات النظام (Settings)</button>
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold bg-zoyOrange text-gray-950 transition text-right">📊 لوحة التحكم (Dashboard)</button>
+                <button onclick="switchTab('rides')" id="nav-rides" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right">🚗 الرحلات الجارية (Live Rides)</button>
+                <button onclick="switchTab('otp')" id="nav-otp" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right">🔑 التحقق ورمز OTP</button>
+                <button onclick="switchTab('drivers')" id="nav-drivers" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right">👨‍✈️ إدارة السائقين (Drivers)</button>
+                <button onclick="switchTab('earnings')" id="nav-earnings" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800 hover:text-white transition text-right">💳 الأرباح والتقارير</button>
             </nav>
         </div>
-        <div class="p-4 border-t border-gray-800 flex items-center gap-3 bg-gray-900/40">
-            <div class="w-9 h-9 rounded-full bg-zoyOrange text-gray-950 font-bold flex items-center justify-center text-xs">أف</div>
-            <div>
-                <h4 class="text-xs font-bold text-white">أبو الفهد العدوان</h4>
-                <p class="text-[10px] text-zoyOrange">إدارة النظام والتشغيل</p>
+        <div class="p-4 border-t border-gray-800 flex items-center justify-between bg-gray-900/40">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-full bg-zoyOrange text-gray-950 font-bold flex items-center justify-center text-xs">م</div>
+                <div>
+                    <h4 class="text-xs font-bold text-white">mohammad139</h4>
+                    <p class="text-[10px] text-zoyOrange">مدير النظام</p>
+                </div>
             </div>
+            <button onclick="handleLogout()" class="text-gray-400 hover:text-red-400 text-xs" title="تسجيل خروج">🚪</button>
         </div>
     </aside>
 
-    <!-- المحتوى الرئيسي المتغير -->
     <main class="flex-1 flex flex-col h-screen overflow-y-auto bg-[#0b0d13]">
         <header class="bg-zoyCard border-b border-gray-800 px-8 py-4 flex justify-between items-center sticky top-0 z-10">
-            <h2 id="headerTitle" class="font-black text-sm text-white">لوحة القيادة (Dashboard)</h2>
+            <h2 id="headerTitle" class="font-black text-sm text-white">لوحة التحكم (Dashboard)</h2>
             <div class="flex items-center gap-3 text-xs">
-                <span class="bg-emerald-950/60 text-emerald-400 border border-emerald-800/50 px-3 py-1 rounded-full text-[10px]">● متصل ومحمي</span>
+                <span class="bg-emerald-950/60 text-emerald-400 border border-emerald-800/50 px-3 py-1 rounded-full text-[10px]">● النظام نشط ومحمي</span>
             </div>
         </header>
 
         <div class="p-8">
             
-            <!-- 1. لوحة القيادة -->
             <div id="tab-dashboard" class="space-y-6 content-section">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div class="bg-zoyCard border border-gray-800 p-5 rounded-2xl">
                         <span class="text-xs text-gray-400">إجمالي الحجوزات</span>
                         <h3 class="text-3xl font-black text-white mt-2">1,248</h3>
-                        <p class="text-[11px] text-emerald-400 mt-1">تحديث حي مباشر</p>
+                        <p class="text-[11px] text-emerald-400 mt-1">حجوزات فورية ومجدولة</p>
                     </div>
                     <div class="bg-zoyCard border border-gray-800 p-5 rounded-2xl">
-                        <span class="text-xs text-gray-400">إجمالي الأرباح</span>
-                        <h3 class="text-3xl font-black text-zoyOrange mt-2">$24,780</h3>
-                        <p class="text-[11px] text-emerald-400 mt-1">أرباح ممتازة اليوم</p>
+                        <span class="text-xs text-gray-400">أجرة الرحلة الحالية</span>
+                        <h3 class="text-3xl font-black text-zoyOrange mt-2">$15.00</h3>
+                        <p class="text-[11px] text-emerald-400 mt-1">مسافة محسوبة بدقة</p>
                     </div>
                     <div class="bg-zoyCard border border-gray-800 p-5 rounded-2xl">
                         <span class="text-xs text-gray-400">الرحلات النشطة</span>
                         <h3 class="text-3xl font-black text-blue-400 mt-2">320</h3>
-                        <p class="text-[11px] text-blue-300 mt-1">تتبع GPS مفعل</p>
+                        <p class="text-[11px] text-blue-300 mt-1">تتبع مباشر عبر الـ GPS</p>
                     </div>
                     <div class="bg-zoyCard border border-gray-800 p-5 rounded-2xl">
-                        <span class="text-xs text-gray-400">الركاب المسجلين</span>
-                        <h3 class="text-3xl font-black text-purple-400 mt-2">1,102</h3>
-                        <p class="text-[11px] text-purple-300 mt-1">عملاء جدد</p>
+                        <span class="text-xs text-gray-400">تقييم الكباتن</span>
+                        <h3 class="text-3xl font-black text-purple-400 mt-2">⭐ 5.0</h3>
+                        <p class="text-[11px] text-purple-300 mt-1">تقييمات العملاء النشطة</p>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. الحجوزات -->
-            <div id="tab-bookings" class="space-y-6 content-section hidden">
+            <div id="tab-rides" class="space-y-6 content-section hidden">
                 <div class="bg-zoyCard border border-gray-800 p-6 rounded-2xl space-y-4">
-                    <h3 class="font-bold text-sm text-zoyOrange">سجل الحجوزات النشطة</h3>
-                    <div class="p-4 bg-gray-900 rounded-xl border border-gray-800 flex justify-between items-center">
-                        <div><h4 class="text-xs font-bold text-white">حجز رقم #4412</h4><p class="text-[10px] text-gray-400">من عمان إلى مطار الملكة علياء</p></div>
-                        <span class="text-xs font-bold text-zoyOrange">15.00 JOD</span>
+                    <h3 class="font-bold text-sm text-zoyOrange">تفاصيل الرحلة المباشرة</h3>
+                    <div class="p-4 bg-gray-900 rounded-xl border border-gray-800 space-y-2">
+                        <div class="flex justify-between"><span class="text-xs text-gray-400">رقم الحجز:</span><span class="text-xs font-bold text-white">#9821</span></div>
+                        <div class="flex justify-between"><span class="text-xs text-gray-400">موقع الاستلام:</span><span class="text-xs font-bold text-white">شارع الملك حسين، عمان</span></div>
+                        <div class="flex justify-between"><span class="text-xs text-gray-400">الوجهة:</span><span class="text-xs font-bold text-white">مطار الملكة علياء</span></div>
+                        <div class="flex justify-between"><span class="text-xs text-gray-400">الحالة:</span><span class="text-xs font-bold text-amber-400">الكابتن وصل نقطة الاستلام</span></div>
                     </div>
                 </div>
             </div>
 
-            <!-- 3. نظام الإرسال -->
-            <div id="tab-dispatch" class="space-y-6 content-section hidden">
-                <div class="bg-zoyCard border border-gray-800 p-6 rounded-2xl space-y-4">
-                    <h3 class="font-bold text-sm text-zoyOrange">إرسال الطلبات الذكي</h3>
-                    <p class="text-xs text-gray-400">ربط السيارات المتاحة فوراً بالزبائن.</p>
-                    <button onclick="alert('تم إرسال الطلب لأقرب مركبة بنجاح')" class="bg-zoyOrange text-gray-950 font-bold px-4 py-2 rounded-xl text-xs">إرسال طلب فوري</button>
-                </div>
-            </div>
-
-            <!-- 4. الأسطول -->
-            <div id="tab-fleet" class="space-y-6 content-section hidden">
-                <div class="bg-zoyCard border border-gray-800 p-6 rounded-2xl space-y-4">
-                    <h3 class="font-bold text-sm text-zoyOrange">إدارة الأسطول والمركبات</h3>
-                    <div class="p-4 bg-gray-900 rounded-xl border border-gray-800 flex justify-between items-center">
-                        <div><h4 class="text-xs font-bold text-white">هيونداي النترا (1600 سي سي)</h4><p class="text-[10px] text-emerald-400">السائق: أبو الفهد العدوان (جاهز للعمل)</p></div>
-                        <span class="text-xs text-gray-400">الحالة: ممتازة</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 5. المدفوعات -->
-            <div id="tab-payments" class="space-y-6 content-section hidden">
-                <div class="bg-zoyCard border border-gray-800 p-6 rounded-2xl space-y-4">
-                    <h3 class="font-bold text-sm text-zoyOrange">سجل الأرباح المالية</h3>
-                    <div class="text-2xl font-black text-emerald-400">480.00 JOD <span class="text-xs text-gray-400">(إجمالي مقبوضات اليوم)</span></div>
-                </div>
-            </div>
-
-            <!-- 6. إعدادات النظام -->
-            <div id="tab-settings" class="space-y-6 content-section hidden">
+            <div id="tab-otp" class="space-y-6 content-section hidden">
                 <div class="bg-zoyCard border border-gray-800 p-6 rounded-2xl space-y-4 max-w-md">
-                    <h3 class="font-bold text-sm text-zoyOrange">إعدادات الأمان وجدار الحماية</h3>
-                    <button onclick="alert('تم تحديث جدار الحماية بنجاح')" class="w-full bg-zoyOrange text-gray-950 font-bold py-2.5 rounded-xl text-xs">حفظ التعديلات الأمنية</button>
+                    <h3 class="font-bold text-sm text-zoyOrange">نظام التحقق بررمز الـ OTP</h3>
+                    <p class="text-xs text-gray-400">يتم إدخال الرمز لتفعيل وبدء الرحلة:</p>
+                    <div class="p-3 bg-gray-900 rounded-xl text-center text-xl font-black tracking-widest text-emerald-400 border border-gray-800">
+                        9187
+                    </div>
+                    <button onclick="alert('تم إدخال الرمز بنجاح وبدأت الرحلة!')" class="w-full bg-zoyOrange text-gray-950 font-bold py-2.5 rounded-xl text-xs">تأكيد رمز OTP وبدء الرحلة</button>
+                </div>
+            </div>
+
+            <div id="tab-drivers" class="space-y-6 content-section hidden">
+                <div class="bg-zoyCard border border-gray-800 p-6 rounded-2xl space-y-4">
+                    <h3 class="font-bold text-sm text-zoyOrange">قائمة السائقين المتاحين</h3>
+                    <div class="p-4 bg-gray-900 rounded-xl border border-gray-800 flex justify-between items-center">
+                        <div><h4 class="text-xs font-bold text-white">كابتن أحمد</h4><p class="text-[10px] text-emerald-400">الحالة: متصل وجاهز للطلبات</p></div>
+                        <span class="text-xs font-bold text-zoyOrange">⭐ 5.0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-earnings" class="space-y-6 content-section hidden">
+                <div class="bg-zoyCard border border-gray-800 p-6 rounded-2xl space-y-4">
+                    <h3 class="font-bold text-sm text-zoyOrange">سجل تحصيل الأجور</h3>
+                    <div class="text-2xl font-black text-emerald-400">$480.00 <span class="text-xs text-gray-400 font-normal">(إجمالي مقبوضات اليوم)</span></div>
                 </div>
             </div>
 
@@ -134,6 +152,25 @@
     </main>
 
     <script>
+        function handleLogin() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const errorMsg = document.getElementById('error-msg');
+
+            if(user === 'mohammad139' && pass === '0796129002*') {
+                document.getElementById('login-screen').classList.add('hidden');
+                errorMsg.classList.add('hidden');
+            } else {
+                errorMsg.classList.remove('hidden');
+            }
+        }
+
+        function handleLogout() {
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('login-screen').classList.remove('hidden');
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.content-section').forEach(sec => sec.classList.add('hidden'));
             document.querySelectorAll('aside nav button').forEach(btn => {
@@ -143,12 +180,11 @@
             document.getElementById('nav-' + tabId).className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold bg-zoyOrange text-gray-950 transition text-right";
             
             const titles = {
-                'dashboard': 'لوحة القيادة (Dashboard)',
-                'bookings': 'إدارة الحجوزات (Bookings)',
-                'dispatch': 'نظام الإرسال (Dispatch)',
-                'fleet': 'إدارة الأسطول والمركبات (Fleet)',
-                'payments': 'المدفوعات والأرباح (Payments)',
-                'settings': 'إعدادات النظام (Settings)'
+                'dashboard': 'لوحة التحكم (Dashboard)',
+                'rides': 'الرحلات الجارية (Live Rides)',
+                'otp': 'التحقق ورمز OTP',
+                'drivers': 'إدارة السائقين (Drivers)',
+                'earnings': 'الأرباح والتقارير'
             };
             document.getElementById('headerTitle').innerText = titles[tabId];
         }
